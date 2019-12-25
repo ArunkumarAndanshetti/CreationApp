@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         billingAddresssActivity = new BillingAddresssActivity();
         taxRegistrationActivity = new TaxRegistrationActivity();
         bankDetailsActvity = new BankDetailsActvity();
+
         allTabs.addTab(allTabs.newTab().setText("CUSTOMER DETAILS"),true);
         allTabs.addTab(allTabs.newTab().setText("BILLING ADDRESS"));
         allTabs.addTab(allTabs.newTab().setText("TAX REGISTRATION"));
