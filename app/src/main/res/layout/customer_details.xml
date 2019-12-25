@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_margin="@dimen/_5sdp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_margin="@dimen/_5sdp"
+            android:layout_width="match_parent"
+            android:background="@drawable/edit_box"
+            android:layout_height="wrap_content">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ledger Type"
+                android:layout_marginTop="5dp"
+                android:singleLine="true"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/black"/>
+
+            <Spinner
+                android:id="@+id/spinnerLedger"
+                android:layout_width="match_parent"
+                android:gravity="start"
+                android:hint="Select Category"
+                android:clickable="false"
+                android:focusable="true"
+                android:layout_height="@dimen/_20sdp"
+                />
+
+        </LinearLayout>
+            <EditText
+                android:id="@+id/edFirmName"
+                android:layout_width="match_parent"
+                android:gravity="start"
+                android:layout_margin="@dimen/_5sdp"
+                android:background="@drawable/edit_box"
+                android:hint="Enter Firm Name"
+                android:clickable="false"
+                android:focusable="true"
+                android:layout_height="40dp"
+                />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_margin="@dimen/_5sdp"
+                android:layout_width="match_parent"
+                android:background="@drawable/edit_box"
+                android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Company Type"
+                    android:layout_marginTop="5dp"
+                    android:singleLine="true"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/black"/>
+
+                <Spinner
+                    android:id="@+id/spinnerCompany"
+                    android:layout_width="match_parent"
+                    android:gravity="start"
+                    android:hint="Select Category"
+                    android:clickable="false"
+                    android:focusable="true"
+                    android:layout_height="@dimen/_20sdp"
+                    />
+
+            </LinearLayout>
+            <EditText
+                android:id="@+id/edContactPerson"
+                android:layout_width="match_parent"
+                android:gravity="start"
+                android:layout_margin="@dimen/_5sdp"
+                android:background="@drawable/edit_box"
+                android:hint="Enter Contact Person"
+                android:clickable="false"
+                android:focusable="true"
+                android:layout_height="40dp"
+                />
+
+            <EditText
+                android:id="@+id/edCustomer"
+                android:layout_width="match_parent"
+                android:gravity="start"
+                android:layout_margin="@dimen/_5sdp"
+                android:background="@drawable/edit_box"
+                android:hint="Enter Customer Name"
+                android:clickable="false"
+                android:focusable="true"
+                android:layout_height="40dp"
+                />
+
+            <EditText
+                android:id="@+id/edMobile"
+                android:layout_width="match_parent"
+                android:gravity="start"
+                android:layout_margin="@dimen/_5sdp"
+                android:inputType="number"
+                android:maxLength="13"
+                android:background="@drawable/edit_box"
+                android:hint="Enter Mobile Number"
+                android:clickable="false"
+                android:focusable="true"
+                android:layout_height="40dp"
+                />
+
+            <EditText
+                android:id="@+id/edAlternativeNo"
+                android:layout_width="match_parent"
+                android:gravity="start"
+                android:layout_margin="@dimen/_5sdp"
+                android:background="@drawable/edit_box"
+                android:hint="Enter Alternative Number"
+                android:clickable="false"
+                android:focusable="true"
+                android:layout_height="40dp"
+                />
+
+            <EditText
+                android:id="@+id/edtelephone"
+                android:layout_width="match_parent"
+                android:gravity="start"
+                android:layout_margin="@dimen/_5sdp"
+                android:background="@drawable/edit_box"
+                android:hint="Enter Telephone No"
+                android:clickable="false"
+                android:focusable="true"
+                android:layout_height="40dp"
+                />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_margin="@dimen/_5sdp"
+                android:layout_width="match_parent"
+                android:background="@drawable/edit_box"
+                android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Salesman/Agent Type"
+                    android:layout_marginTop="5dp"
+                    android:singleLine="true"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/black"/>
+
+                <Spinner
+                    android:id="@+id/spinnerAgent"
+                    android:layout_width="match_parent"
+                    android:gravity="start"
+                    android:hint="Select Category"
+                    android:clickable="false"
+                    android:focusable="true"
+                    android:layout_height="@dimen/_20sdp"
+                    />
+
+            </LinearLayout>
+
+            <Button
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_margin="@dimen/_5sdp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_button_rounded"
+                android:id="@+id/btnNext"
+                android:text="Next"
+                />
+
+        </LinearLayout>
+</ScrollView>

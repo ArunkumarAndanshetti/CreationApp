@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">domain.com (to be adjusted)</domain>
+    </domain-config>
+</network-security-config>
+
+
+<!--<?xml version="1.0" encoding="utf-8"?>
+<manifest ...>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application
+        ...
+        android:networkSecurityConfig="@xml/network_security_config"
+        ...>
+        ...
+    </application>
+</manifest>-->
+
+<!--<manifest android:targetSandboxVersion="1">
+    <uses-permission android:name="android.permission.INTERNET" />
+    ...
+</manifest>-->

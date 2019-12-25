@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_height="match_parent">
+
+
+
+        <EditText
+            android:id="@+id/edBankName"
+            android:layout_width="match_parent"
+            android:gravity="start"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/edit_box"
+            android:hint="Enter Bank Name"
+            android:clickable="false"
+            android:focusable="true"
+            android:layout_height="@dimen/_30sdp"
+            />
+
+        <EditText
+            android:id="@+id/edBranch"
+            android:layout_width="match_parent"
+            android:gravity="start"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/edit_box"
+            android:hint="Enter Branch"
+            android:clickable="false"
+            android:focusable="true"
+            android:layout_height="@dimen/_30sdp"
+            />
+
+
+        <EditText
+            android:id="@+id/edCity"
+            android:layout_width="match_parent"
+            android:gravity="start"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/edit_box"
+            android:hint="Enter City Name"
+            android:clickable="false"
+            android:focusable="true"
+            android:layout_height="@dimen/_30sdp"
+            />
+
+
+        <EditText
+            android:id="@+id/edAccountNo"
+            android:layout_width="match_parent"
+            android:gravity="start"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/edit_box"
+            android:hint="Enter Account Number"
+            android:clickable="false"
+            android:focusable="true"
+            android:layout_height="@dimen/_30sdp"
+            />
+
+        <EditText
+            android:id="@+id/edIFSC"
+            android:layout_width="match_parent"
+            android:gravity="start"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/edit_box"
+            android:hint="Enter IFSC code"
+            android:clickable="false"
+            android:focusable="true"
+            android:layout_height="@dimen/_30sdp"
+            />
+
+
+        <!--<EditText
+            android:id="@+id/edOutStandingBill"
+            android:layout_width="match_parent"
+            android:gravity="start"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/edit_box"
+            android:hint="Enter OutStanding Bill"
+            android:clickable="false"
+            android:focusable="true"
+            android:layout_height="@dimen/_30sdp"
+            />
+
+
+        <EditText
+            android:id="@+id/edCredit"
+            android:layout_width="match_parent"
+            android:gravity="start"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/edit_box"
+            android:hint="Enter Credit days"
+            android:clickable="false"
+            android:focusable="true"
+            android:layout_height="@dimen/_30sdp"
+            />
+
+
+        <EditText
+            android:id="@+id/edCreditLimit"
+            android:layout_width="match_parent"
+            android:gravity="start"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/edit_box"
+            android:hint="Enter Credit Limit amount"
+            android:clickable="false"
+            android:focusable="true"
+            android:layout_height="@dimen/_30sdp"
+            />
+        <EditText
+            android:id="@+id/edBalance"
+            android:layout_width="match_parent"
+            android:gravity="start"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/edit_box"
+            android:hint="Enter Opening Balance"
+            android:clickable="false"
+            android:focusable="true"
+            android:layout_height="@dimen/_30sdp"
+            />
+
+        <EditText
+            android:id="@+id/edInsuranceCompany"
+            android:layout_width="match_parent"
+            android:gravity="start"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/edit_box"
+            android:hint="Enter Insurance company Name"
+            android:clickable="false"
+            android:focusable="true"
+            android:layout_height="@dimen/_30sdp"
+            />
+
+        <EditText
+            android:id="@+id/edInsuranceNumber"
+            android:layout_width="match_parent"
+            android:gravity="start"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/edit_box"
+            android:hint="Enter Insurance Number"
+            android:clickable="false"
+            android:focusable="true"
+            android:layout_height="@dimen/_30sdp"
+            />
+    <LinearLayout android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:weightSum="1"
+        android:layout_height="match_parent">
+        <EditText
+            android:id="@+id/edInsuranceDate"
+            android:layout_width="wrap_content"
+            android:gravity="start"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/edit_box"
+            android:hint="Enter Insurance Expiry Date"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_weight="1"
+            android:layout_height="@dimen/_30sdp"
+            />
+
+    </LinearLayout>-->
+        <Button
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_margin="@dimen/_5sdp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_button_rounded"
+            android:id="@+id/btnNext"
+            android:text="Next"
+            />
+    </LinearLayout>
+
+</ScrollView>
