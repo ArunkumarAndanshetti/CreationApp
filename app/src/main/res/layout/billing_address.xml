@@ -14,7 +14,7 @@
         android:gravity="start"
         android:layout_margin="@dimen/_5sdp"
         android:background="@drawable/edit_box"
-        android:hint="Enter Bank Address"
+        android:hint="Enter Billing Address"
         android:clickable="false"
         android:focusable="true"
         android:layout_height="@dimen/_50sdp"

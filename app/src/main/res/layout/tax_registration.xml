@@ -43,13 +43,13 @@
         android:background="@drawable/edit_box"
         android:layout_height="@dimen/_50sdp">
 
-        <TextView
+        <EditText
             android:id="@+id/gstNumber"
             android:layout_width="353dp"
             android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:layout_weight="0.6"
-            android:text="Pick GST Number"
+            android:hint="Pick GST Number"
             android:textColor="@color/black" />
 
         <ImageView
@@ -81,13 +81,13 @@
         android:background="@drawable/edit_box"
         android:layout_height="@dimen/_50sdp">
 
-        <TextView
+        <EditText
             android:id="@+id/PanNumber"
             android:layout_width="353dp"
             android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:layout_weight="0.6"
-            android:text="Pick Pan Number"
+            android:hint="Pick Pan Number"
             android:textColor="@color/black" />
 
         <ImageView

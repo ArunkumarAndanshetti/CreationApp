@@ -122,40 +122,6 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         mapFragment.getMapAsync(this);
         checkLocationPermission();
         edSearchLocation = billView.findViewById(R.id.editText);
-        /*autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-        autocompleteFragment.setHint("Let's find some restaurants");
-        autocompleteFilter = new AutocompleteFilter.Builder().setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES).build();
-
-            autocompleteFragment.setFilter(autocompleteFilter);
-            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-                @Override
-                public void onPlaceSelected(com.google.android.gms.location.places.Place place) {
-                    edSearchLocation.setText(place.getName());
-                }
-
-                @Override
-                public void onError(Status status) {
-                    System.out.println("An error occurred: " + status);
-                }
-            });*/
-
-
-        /*edSearchLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AutocompleteFilter.Builder filterBuilder = new AutocompleteFilter.Builder();
-                filterBuilder.setCountry("US");
-                filterBuilder.setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS);
-                try {
-                    Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
-                            .setFilter(filterBuilder.build())
-                            .build(getActivity());
-                    startActivityForResult(intent, AUTO_COMP_REQ_CODE);
-                } catch (Exception e) {
-                    Log.e(TAG, e.getStackTrace().toString());
-                }
-            }
-        });*/
         search = billView.findViewById(R.id.search);
         btnNext = billView.findViewById(R.id.btnNext);
         btnNext.setOnClickListener(new View.OnClickListener() {
