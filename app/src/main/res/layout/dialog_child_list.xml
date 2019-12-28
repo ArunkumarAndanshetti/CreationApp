@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="350dp"
+    android:background="@drawable/bg_form_rounded"
+    android:layout_height="@dimen/_550sdp">
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/cancel_childcategory"
+        android:src="@drawable/multiply"
+        android:layout_gravity="right"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"
+        android:weightSum="100"
+        android:background="@color/white"
+        android:layout_marginRight="5dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/edCity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_margin="5dp"
+            android:layout_weight="50"
+            android:background="@drawable/edit_box"
+            android:clickable="false"
+            android:drawableLeft="@drawable/search"
+            android:hint="City Name"
+            android:iconifiedByDefault="false" />
+    </LinearLayout>
+
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipe_container"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_400sdp">
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_400sdp"
+        android:id="@+id/recyclerChildCategory"
+        android:scrollbars="vertical" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <Button
+        android:textSize="@dimen/_15sdp"
+        android:layout_margin="@dimen/_10sdp"
+        android:layout_width="wrap_content"
+        android:id="@+id/childcreate"
+        android:background="@drawable/edit_box"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_height="@dimen/_40sdp"
+        android:text="Create New City" />
+
+</LinearLayout>

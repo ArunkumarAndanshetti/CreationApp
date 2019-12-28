@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private BillingAddresssActivity billingAddresssActivity;
     private TaxRegistrationActivity taxRegistrationActivity;
     private BankDetailsActvity bankDetailsActvity;
+    InsuranceFragment insuranceFragment;
     private TabLayout allTabs;
     IntentFilter intentFilter;
     public static ConnectivityReceiver connectivityReceiver;
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         billingAddresssActivity = new BillingAddresssActivity();
         taxRegistrationActivity = new TaxRegistrationActivity();
         bankDetailsActvity = new BankDetailsActvity();
-
+        insuranceFragment = new InsuranceFragment();
         allTabs.addTab(allTabs.newTab().setText("CUSTOMER DETAILS"),true);
         allTabs.addTab(allTabs.newTab().setText("BILLING ADDRESS"));
         allTabs.addTab(allTabs.newTab().setText("TAX REGISTRATION"));

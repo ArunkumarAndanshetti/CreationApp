@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -49,7 +53,7 @@
             android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:layout_weight="0.6"
-            android:hint="Pick GST Number"
+            android:hint="Enter / Pick GST Number"
             android:textColor="@color/black" />
 
         <ImageView
@@ -64,13 +68,60 @@
 
     </LinearLayout>
 
-
+    <EditText
+        android:id="@+id/regstNumber"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.6"
+        android:layout_margin="@dimen/_5sdp"
+        android:background="@drawable/edit_box"
+        android:hint="Re-enter GST Number"
+        android:textColor="@color/black" />
     <ImageView
         android:id="@+id/imageGST"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_100sdp"
         android:visibility="gone"
         android:src="@drawable/camera_icon" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gridviewLinear"
+        android:weightSum="100"
+        android:layout_margin="@dimen/_5sdp"
+        android:background="@drawable/edit_box"
+        android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_120sdp"
+            android:layout_weight=".5"
+            android:layout_gravity="center"
+            android:background="@drawable/edit_box"
+            android:id="@+id/imageFront"
+            android:src="@drawable/customer1" />
+        <Button
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_weight=".3"
+            android:layout_margin="@dimen/_5sdp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_button_rounded"
+            android:id="@+id/btnUploadGst"
+            android:text="Upload GST Document"
+            />
+
+    </LinearLayout>
+    </LinearLayout>
+
 
     <LinearLayout
         android:orientation="horizontal"
@@ -87,7 +138,7 @@
             android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:layout_weight="0.6"
-            android:hint="Pick Pan Number"
+            android:hint="Enter / Pick Pan Number"
             android:textColor="@color/black" />
 
         <ImageView
@@ -98,12 +149,61 @@
             android:id="@+id/pickCamera" />
 
     </LinearLayout>
+
+    <EditText
+        android:id="@+id/rePanNumber"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.6"
+        android:layout_margin="@dimen/_5sdp"
+        android:background="@drawable/edit_box"
+        android:hint="Re-enter Pan Number"
+        android:textColor="@color/black" />
     <ImageView
         android:id="@+id/imagePan"
         android:layout_width="match_parent"
         android:visibility="gone"
         android:layout_height="@dimen/_100sdp"
         android:src="@drawable/camera_icon" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gridviewLinear2"
+        android:weightSum="100"
+        android:layout_margin="@dimen/_5sdp"
+        android:background="@drawable/edit_box"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="@dimen/_120sdp"
+                android:layout_weight=".5"
+                android:layout_gravity="center"
+                android:background="@drawable/edit_box"
+                android:id="@+id/imageFront1"
+                android:src="@drawable/customer1" />
+            <Button
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_weight="0.3"
+                android:layout_margin="@dimen/_5sdp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_button_rounded"
+                android:id="@+id/btnUploadPan"
+                android:text="Upload Pan Document"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+
     <Button
         android:layout_width="@dimen/_100sdp"
         android:layout_height="wrap_content"
@@ -116,3 +216,4 @@
         />
 
 </LinearLayout>
+</ScrollView>

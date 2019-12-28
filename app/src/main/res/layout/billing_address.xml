@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:scrollbars="vertical">
 <LinearLayout
     android:orientation="vertical"
@@ -14,36 +15,66 @@
         android:gravity="start"
         android:layout_margin="@dimen/_5sdp"
         android:background="@drawable/edit_box"
-        android:hint="Enter Billing Address"
+        android:hint="Enter Building/Road Address"
         android:clickable="false"
         android:focusable="true"
         android:layout_height="@dimen/_50sdp"
         />
-
     <EditText
-        android:id="@+id/edContactPerson"
+        android:id="@+id/edArea"
         android:layout_width="match_parent"
         android:gravity="start"
         android:layout_margin="@dimen/_5sdp"
         android:background="@drawable/edit_box"
-        android:hint="Enter Landmark"
+        android:hint="Enter Area"
         android:clickable="false"
         android:focusable="true"
         android:layout_height="40dp"
         />
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_margin="@dimen/_5sdp"
+        android:layout_width="match_parent"
+        android:weightSum="1"
+
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="City"
+            android:gravity="start"
+            android:layout_weight="0.5"
+            android:singleLine="true"
+            android:textSize="@dimen/_13sdp"
+            android:textColor="@color/black"/>
+
+        <EditText
+            android:id="@+id/spinnerCity"
+            android:layout_width="match_parent"
+            android:gravity="start"
+            android:layout_weight="0.5"
+            android:hint="Select City"
+            android:background="@drawable/edit_box"
+            android:clickable="false"
+            android:editable="false"
+            android:focusableInTouchMode="false"
+            android:focusable="true"
+            android:layout_height="@dimen/_30sdp"
+            />
+    </LinearLayout>
     <EditText
-        android:id="@+id/edState"
+        android:id="@+id/edCityCode"
         android:layout_width="match_parent"
         android:gravity="start"
         android:layout_margin="@dimen/_5sdp"
         android:background="@drawable/edit_box"
-        android:hint="Enter State"
+        android:hint="Enter City Code"
         android:clickable="false"
         android:focusable="true"
         android:layout_height="40dp"
         />
-
     <EditText
         android:id="@+id/edPincode"
         android:layout_width="match_parent"
@@ -57,8 +88,54 @@
         android:focusable="true"
         android:layout_height="40dp"
         />
+    <!--<EditText
+        android:id="@+id/edState"
+        android:layout_width="match_parent"
+        android:gravity="start"
+        android:layout_margin="@dimen/_5sdp"
+        android:background="@drawable/edit_box"
+        android:hint="Enter State"
+        android:clickable="false"
+        android:focusable="true"
+        android:layout_height="40dp"
+        />-->
 
-    <EditText
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_margin="@dimen/_5sdp"
+        android:layout_width="match_parent"
+        android:weightSum="1"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="State"
+            android:layout_weight="0.5"
+            android:gravity="start"
+            android:singleLine="true"
+            android:textSize="@dimen/_13sdp"
+            android:textColor="@color/black"/>
+
+        <EditText
+            android:id="@+id/spinnerState"
+            android:layout_width="match_parent"
+            android:gravity="start"
+            android:layout_weight="0.5"
+            android:hint="Select State"
+            android:background="@drawable/edit_box"
+            android:clickable="false"
+            android:editable="false"
+            android:focusableInTouchMode="false"
+            android:focusable="true"
+            android:layout_height="@dimen/_30sdp"
+            />
+    </LinearLayout>
+
+
+
+
+    <!--<EditText
         android:id="@+id/edCity"
         android:layout_width="match_parent"
         android:gravity="start"
@@ -68,47 +145,24 @@
         android:clickable="false"
         android:focusable="true"
         android:layout_height="40dp"
-        />
-
-    <EditText
-        android:id="@+id/edCityCode"
-        android:layout_width="match_parent"
-        android:gravity="start"
-        android:layout_margin="@dimen/_5sdp"
-        android:background="@drawable/edit_box"
-        android:hint="Enter City Code"
-        android:clickable="false"
-        android:focusable="true"
-        android:layout_height="40dp"
-        />
-
-    <EditText
-        android:id="@+id/edArea"
-        android:layout_width="match_parent"
-        android:gravity="start"
-        android:layout_margin="@dimen/_5sdp"
-        android:background="@drawable/edit_box"
-        android:hint="Enter Area"
-        android:clickable="false"
-        android:focusable="true"
-        android:layout_height="40dp"
-        />
-
-
-    <!--<EditText
-        android:id="@+id/Map"
-        android:layout_width="match_parent"
-        android:layout_margin="@dimen/_5sdp"
-        android:background="@drawable/edit_box"
-        android:hint="MAP"
-        android:gravity="center_vertical"
-        android:clickable="false"
-        android:focusable="true"
-        android:layout_height="@dimen/_500sdp"
         />-->
 
-
-
+    <Button
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:layout_margin="@dimen/_5sdp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_button_rounded"
+        android:id="@+id/btnMap"
+        android:text="Google Map"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:id="@+id/linear"
+        android:orientation="horizontal">
     <fragment
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:id="@+id/map"
@@ -116,19 +170,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_500sdp">
 
-
-        <!--<androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="0dp">
-            <fragment
-                android:id="@+id/autocomplete_fragment"
-                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" />
-        </androidx.cardview.widget.CardView>-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -159,6 +200,7 @@
 
         </LinearLayout>
     </fragment>
+    </LinearLayout>
 
     <Button
         android:layout_width="@dimen/_100sdp"

@@ -2,39 +2,41 @@ package com.mwbtech.utilityapp;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
@@ -43,7 +45,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -53,23 +54,21 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
 import static android.content.Context.LOCATION_SERVICE;
-import static androidx.constraintlayout.widget.Constraints.TAG;
-import static com.mwbtech.utilityapp.MainActivity.connectivityReceiver;
 
-public class BillingAddresssActivity extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,LocationListener {
+public class BillingAddresssActivity extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener {
 
-    Button btnNext;
+    Button btnNext,btnMap;
     ImageView search;
     private GoogleMap mMap;
     Location mLastLocation;
@@ -78,17 +77,26 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
     LocationRequest mLocationRequest;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 599;
     LocationManager locationManager;
-    private Bitmap mSnapshot;
+    Button btnCancel,btnOk;
     View billView;
     int pos = 2;
     AutoCompleteTextView edSearchLocation;
     CallToFragment callToFragment;
-    private int PLACE_PICKER_REQUEST = 1;
-    ArrayList markerPoints= new ArrayList();
+    LinearLayout linearLayout;
     public static final String TAG = "AutoCompleteActivity";
     private static final int AUTO_COMP_REQ_CODE = 2;
     public static PlaceAutocompleteFragment autocompleteFragment;
     public static AutocompleteFilter autocompleteFilter;
+    EditText spState,spCity;
+    ArrayAdapter arrayAdapterState;
+    ArrayAdapter arrayAdapterCity;
+    List<String> stateList;
+    List<String> cityList;
+    Dialog mDialog,mDialogState,mDialogCity,mDialogOther;
+    EditText dialogState,dialogCity,createCity;
+    ListView listViewState,listViewCity;
+    String cityName,stateName;
+    Button btnCreateCity,submit;
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
@@ -121,22 +129,20 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mapFragment.getMapAsync(this);
         checkLocationPermission();
+        stateList = new ArrayList<>();
+        cityList = new ArrayList<>();
+        linearLayout = billView.findViewById(R.id.linear);
+        btnMap = billView.findViewById(R.id.btnMap);
         edSearchLocation = billView.findViewById(R.id.editText);
         search = billView.findViewById(R.id.search);
         btnNext = billView.findViewById(R.id.btnNext);
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               callToFragment.communicateFragment(pos);
-            }
-        });
-
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchLocation(v);
-            }
-        });
+        spState = billView.findViewById(R.id.spinnerState);
+        spCity = billView.findViewById(R.id.spinnerCity);
+        spState.setOnClickListener(this::onClick);
+        spCity.setOnClickListener(this::onClick);
+        btnMap.setOnClickListener(this::onClick);
+        btnNext.setOnClickListener(this);
+        search.setOnClickListener(this::onClick);
         return billView;
     }
 
@@ -157,6 +163,187 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
             super.onActivityResult(requestCode, resultCode, data);
         }
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+
+            case R.id.btnNext:
+                callToFragment.communicateFragment(pos);
+                break;
+
+            case R.id.search:
+                searchLocation(v);
+                break;
+            case R.id.btnMap:
+
+
+                mDialog = new Dialog(getContext());
+                mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                mDialog.getWindow().setBackgroundDrawable(
+                        new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                mDialog.setContentView(R.layout.dialog_alert);
+                mDialog.setCancelable(false);
+                mDialog.show();
+                btnCancel = mDialog.findViewById(R.id.btnCancel);
+                btnOk = mDialog.findViewById(R.id.btnOk);
+                btnOk.setOnClickListener(this::onClick);
+                btnCancel.setOnClickListener(this::onClick);
+                break;
+            case R.id.btnCancel:
+                mDialog.dismiss();
+                break;
+
+            case R.id.btnOk:
+                btnMap.setVisibility(View.GONE);
+                linearLayout.setVisibility(View.VISIBLE);
+                mDialog.dismiss();
+                break;
+
+            case R.id.spinnerState:
+                mDialogState = new Dialog(getContext());
+                mDialogState.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                mDialogState.getWindow().setBackgroundDrawable(
+                        new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                mDialogState.setContentView(R.layout.dialog_category_list);
+                mDialogState.setCancelable(false);
+
+                dialogState = (EditText)mDialogState.findViewById(R.id.edState);
+                listViewState = (ListView)mDialogState.findViewById(R.id.recyclerCategory);
+                ImageView imageView = (ImageView)mDialogState.findViewById(R.id.cancel_category);
+                mDialogState.show();
+                imageView.setOnClickListener(this::onClick);
+                arrayAdapterState = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_list_item_1, android.R.id.text1, getStateList());
+                listViewState.setAdapter(arrayAdapterState);
+                listViewState.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        String stateName = (String) listViewState.getItemAtPosition(position);
+                        //Toast.makeText(getActivity(),stateName , Toast.LENGTH_LONG).show();
+                        spState.setText(stateName);
+                        mDialogState.dismiss();
+                    }
+                });
+                dialogState.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        try {
+                            arrayAdapterState.getFilter().filter(s);
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        try {
+                            arrayAdapterState.getFilter().filter(s);
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                break;
+
+            case R.id.spinnerCity:
+                mDialogCity = new Dialog(getContext());
+                mDialogCity.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                mDialogCity.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                mDialogCity.setContentView(R.layout.dialog_child_list);
+                mDialogCity.setCancelable(false);
+                dialogCity = (EditText)mDialogCity.findViewById(R.id.edCity);
+                listViewCity = (ListView)mDialogCity.findViewById(R.id.recyclerChildCategory);
+                btnCreateCity = (Button)mDialogCity.findViewById(R.id.childcreate);
+                ImageView imageView3 = (ImageView)mDialogCity.findViewById(R.id.cancel_childcategory);
+                imageView3.setOnClickListener(this::onClick);
+                mDialogCity.show();
+                arrayAdapterCity = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_list_item_1, android.R.id.text1, getCityList());
+                listViewCity.setAdapter(arrayAdapterCity);
+                btnCreateCity.setOnClickListener(this::onClick);
+                dialogCity.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        try {
+                            arrayAdapterCity.getFilter().filter(s);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        try {
+                            arrayAdapterCity.getFilter().filter(s);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+                listViewCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        String cityName = (String) listViewCity.getItemAtPosition(position);
+                        //Toast.makeText(getActivity(),cityName , Toast.LENGTH_LONG).show();
+                        spCity.setText(cityName);
+                        mDialogCity.dismiss();
+                    }
+                });
+                break;
+
+            case R.id.cancel_category:
+                    mDialogState.dismiss();
+                break;
+            case R.id.cancel_childcategory:
+                    mDialogCity.dismiss();
+                break;
+            case R.id.childcreate:
+                mDialogOther =  new Dialog(getContext());
+                mDialogOther.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                mDialogOther.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                mDialogOther.setContentView(R.layout.dialog_city_list);
+                mDialogOther.setCancelable(false);
+                createCity = mDialogOther.findViewById(R.id.create_child);
+                submit = mDialogOther.findViewById(R.id.btnchild);
+                ImageView childCancel = mDialogOther.findViewById(R.id.cancel_city);
+                mDialogOther.show();
+                childCancel.setOnClickListener(this::onClick);
+                childCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mDialogOther.dismiss();
+                    }
+                });
+                submit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if(createCity.getText().toString().isEmpty()){
+                            createCity.setError("Enter City Name");
+                        }else {
+                            //createChildCategoryMethodToServer(new ChildCategory(0,dialogCreateChildCategory.getText().toString(),selectedSubCategoryId,1));
+                        }
+                    }
+                });
+                break;
+
+            case R.id.cancel_city:
+                mDialogOther.dismiss();
+                break;
+
+        }
     }
 
 
@@ -235,8 +422,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -313,4 +499,95 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
     }
+
+
+    public String getStateJson()
+    {
+        String json=null;
+        try
+        {
+            InputStream is = getContext().getAssets().open("states.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+            return json;
+        }
+        return json;
+    }
+
+    // This add all JSON object's data to the respective lists
+    public List<String> getStateList()
+    {
+        // Exceptions are returned by JSONObject when the object cannot be created
+        try
+        {
+            // Convert the string returned to a JSON object
+            JSONObject jsonObject=new JSONObject(getStateJson());
+            // Get Json array
+            JSONArray array = jsonObject.getJSONArray("states");
+            for(int i=0;i<array.length();i++)
+            {
+                // select the particular JSON data
+                JSONObject object=array.getJSONObject(i);
+                String state=object.getString("state");
+                stateList.add(state);
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return stateList;
+    }
+
+
+    public String getCityJson()
+    {
+        String json=null;
+        try
+        {
+            InputStream is = getContext().getAssets().open("city.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+            return json;
+        }
+        return json;
+    }
+
+    public List<String> getCityList()
+    {
+        try
+        {
+            // Convert the string returned to a JSON object
+            JSONObject jsonObject=new JSONObject(getCityJson());
+            // Get Json array
+            JSONArray array = jsonObject.getJSONArray("cities");
+            for(int i=0;i<array.length();i++)
+            {
+                // select the particular JSON data
+                JSONObject object=array.getJSONObject(i);
+                String city=object.getString("city");
+                cityList.add(city);
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return cityList;
+    }
+
 }
