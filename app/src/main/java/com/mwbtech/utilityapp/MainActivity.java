@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import android.view.MenuItem;
@@ -19,10 +18,6 @@ import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -34,12 +29,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.PrimitiveIterator;
-
-import static com.mwbtech.utilityapp.BillingAddresssActivity.autocompleteFilter;
-import static com.mwbtech.utilityapp.BillingAddresssActivity.autocompleteFragment;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, CustomerDetails.CallToBillFragment,BillingAddresssActivity.CallToFragment, TaxRegistrationActivity.CallToBankFragment,ConnectivityReceiver.ConnectivityReceiverListener {
 
@@ -52,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private BillingAddresssActivity billingAddresssActivity;
     private TaxRegistrationActivity taxRegistrationActivity;
     private BankDetailsActvity bankDetailsActvity;
-    InsuranceFragment insuranceFragment;
+    CustomerTrade customerTrade;
     private TabLayout allTabs;
     IntentFilter intentFilter;
     public static ConnectivityReceiver connectivityReceiver;
@@ -83,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         allTabs.getTabAt(1).setIcon(R.drawable.billing);
         allTabs.getTabAt(2).setIcon(R.drawable.tax);
         allTabs.getTabAt(3).setIcon(R.drawable.bank);
+        allTabs.getTabAt(4).setIcon(R.drawable.customer1);
     }
 
 
@@ -94,11 +84,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         billingAddresssActivity = new BillingAddresssActivity();
         taxRegistrationActivity = new TaxRegistrationActivity();
         bankDetailsActvity = new BankDetailsActvity();
-        insuranceFragment = new InsuranceFragment();
+        customerTrade = new CustomerTrade();
         allTabs.addTab(allTabs.newTab().setText("CUSTOMER DETAILS"),true);
         allTabs.addTab(allTabs.newTab().setText("BILLING ADDRESS"));
         allTabs.addTab(allTabs.newTab().setText("TAX REGISTRATION"));
         allTabs.addTab(allTabs.newTab().setText("BANK DETAILS"));
+        allTabs.addTab(allTabs.newTab().setText("CUSTOMER TRADE"));
     }
     private void bindWidgetsWithAnEvent()
     {
@@ -133,6 +124,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case 3 :
                 replaceFragment(bankDetailsActvity);
+                break;
+            case 4:
+                replaceFragment(customerTrade);
                 break;
         }
     }

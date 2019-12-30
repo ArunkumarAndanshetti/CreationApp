@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -14,6 +15,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +30,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,7 +39,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
@@ -45,12 +54,14 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -61,8 +72,15 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -87,16 +105,30 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
     private static final int AUTO_COMP_REQ_CODE = 2;
     public static PlaceAutocompleteFragment autocompleteFragment;
     public static AutocompleteFilter autocompleteFilter;
-    EditText spState,spCity;
+    EditText spState,spCity,spPincode;
     ArrayAdapter arrayAdapterState;
     ArrayAdapter arrayAdapterCity;
     List<String> stateList;
     List<String> cityList;
-    Dialog mDialog,mDialogState,mDialogCity,mDialogOther;
-    EditText dialogState,dialogCity,createCity;
-    ListView listViewState,listViewCity;
+    ArrayAdapter arrayAdapterPincode;
+    Dialog mDialog,mDialogState,mDialogCity,mDialogOther,mDialogPincode;
+    EditText dialogState,dialogCity,createCity,pincode;
+    ListView listViewState,listViewCity,listviewPincode;
     String cityName,stateName;
-    Button btnCreateCity,submit;
+    Button btnCreateCity,submit,btnSearch;
+
+    TextView tvLatLong;
+    PincodeAdapter pincodeAdapter;
+    List<PostOfficePincode> pincodeArrayList;
+    List<Office> officeList;
+    CustomerCreationInterface customerCreationInterface;
+
+    String GOOGLE_API_KEY = "AIzaSyD6Rlv6AD9xaIknkRFLgUsi4mP5wxKVCvc";
+
+    LinearLayout linear;
+    private Map<Marker, Map<String, Object>> markers = new HashMap<>();
+    private Map<String, Object> dataModel = new HashMap<>();
+    LatLng latLng;
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
@@ -119,6 +151,8 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         //https://javapapers.com/android/draw-path-on-google-maps-android-api/
 
         //https://velmm.com/google-places-autocomplete-android-example/
+
+        //https://api.postalpincode.in/pincode/591104
     }
 
     @Nullable
@@ -131,13 +165,19 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         checkLocationPermission();
         stateList = new ArrayList<>();
         cityList = new ArrayList<>();
+        pincodeArrayList = new ArrayList<>();
+        officeList = new ArrayList<>();
         linearLayout = billView.findViewById(R.id.linear);
+        linear = billView.findViewById(R.id.linearpin);
         btnMap = billView.findViewById(R.id.btnMap);
         edSearchLocation = billView.findViewById(R.id.editText);
         search = billView.findViewById(R.id.search);
         btnNext = billView.findViewById(R.id.btnNext);
         spState = billView.findViewById(R.id.spinnerState);
         spCity = billView.findViewById(R.id.spinnerCity);
+        spPincode = billView.findViewById(R.id.edPincode);
+        spPincode.setOnClickListener(this::onClick);
+        tvLatLong = billView.findViewById(R.id.latlong);
         spState.setOnClickListener(this::onClick);
         spCity.setOnClickListener(this::onClick);
         btnMap.setOnClickListener(this::onClick);
@@ -196,6 +236,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
                 break;
 
             case R.id.btnOk:
+                tvLatLong.setVisibility(View.VISIBLE);
                 btnMap.setVisibility(View.GONE);
                 linearLayout.setVisibility(View.VISIBLE);
                 mDialog.dismiss();
@@ -215,7 +256,16 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
                 mDialogState.show();
                 imageView.setOnClickListener(this::onClick);
                 arrayAdapterState = new ArrayAdapter<String>(getActivity(),
-                        android.R.layout.simple_list_item_1, android.R.id.text1, getStateList());
+                        android.R.layout.simple_list_item_1, android.R.id.text1, getStateList()){
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+                        TextView text = (TextView) view.findViewById(android.R.id.text1);
+                        text.setTextColor(Color.BLACK);
+                        text.setTextSize(18);
+                        return view;
+                    }
+                };
                 listViewState.setAdapter(arrayAdapterState);
                 listViewState.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -265,7 +315,23 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
                 imageView3.setOnClickListener(this::onClick);
                 mDialogCity.show();
                 arrayAdapterCity = new ArrayAdapter<String>(getActivity(),
-                        android.R.layout.simple_list_item_1, android.R.id.text1, getCityList());
+                        android.R.layout.simple_list_item_1, android.R.id.text1, getCityList()){
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+
+                        /*if (position % 2 == 1) {
+                            view.setBackgroundColor(Color.BLUE);
+                        } else {
+                            view.setBackgroundColor(Color.CYAN);
+                        }*/
+
+                        TextView text = (TextView) view.findViewById(android.R.id.text1);
+                        text.setTextColor(Color.BLACK);
+                        text.setTextSize(18);
+                        return view;
+                    }
+                };
                 listViewCity.setAdapter(arrayAdapterCity);
                 btnCreateCity.setOnClickListener(this::onClick);
                 dialogCity.addTextChangedListener(new TextWatcher() {
@@ -343,7 +409,168 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
                 mDialogOther.dismiss();
                 break;
 
+
+            case R.id.edPincode:
+                mDialogPincode =  new Dialog(getContext());
+                mDialogPincode.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                mDialogPincode.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                mDialogPincode.setContentView(R.layout.dialog_pincode_list);
+                mDialogPincode.setCancelable(false);
+                pincode = mDialogPincode.findViewById(R.id.editPincode);
+                listviewPincode = mDialogPincode.findViewById(R.id.recyclerPincode);
+                ImageView pincodeImg = mDialogPincode.findViewById(R.id.cancel_pincode);
+                btnSearch = mDialogPincode.findViewById(R.id.searhPincode);
+                btnSearch.setOnClickListener(this::onClick);
+                pincodeImg.setOnClickListener(this::onClick);
+                mDialogPincode.show();
+
+
+                listviewPincode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Office pinName = (Office) parent.getItemAtPosition(position);
+                        spPincode.setText(pinName.getPincode());
+                        mDialogPincode.dismiss();
+
+                    }
+                });
+                /*pincode.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        try {
+                            pincodeAdapter.getFilter().filter(s);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                        try {
+                            pincodeAdapter.getFilter().filter(s);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                });*/
+                break;
+
+            case R.id.cancel_pincode:
+                mDialogPincode.dismiss();
+                break;
+            case R.id.searhPincode:
+                boolean digitsOnly = TextUtils.isDigitsOnly(pincode.getText().toString());
+                if (digitsOnly) {
+                    if (pincode.getText().toString().length() == 0) {
+                        pincode.setError("Enter PostOffice Pincode");
+                    } else {
+                        getSearchPincodeMethod(pincode.getText().toString());
+                    }
+                }else {
+                    getSearchNameOfPincodeMethod(pincode.getText().toString());
+                }
+
+                break;
         }
+    }
+
+    private void getSearchNameOfPincodeMethod(String namePincode) {
+            if(ConnectivityReceiver.isConnected()) {
+                customerCreationInterface = Customer_Client.getClient().create(CustomerCreationInterface.class);
+                Call<List<PostOfficePincode>> listCall = customerCreationInterface.getPincodeName(namePincode);
+                listCall.enqueue(new Callback<List<PostOfficePincode>>() {
+                    @Override
+                    public void onResponse(Call<List<PostOfficePincode>> call, Response<List<PostOfficePincode>> response) {
+
+                        if(response.isSuccessful() && response.code() == 200){
+                                pincodeArrayList.clear();
+                                pincodeArrayList = response.body();
+                                Log.i("Pin List", pincodeArrayList.toString());
+                                    for (int i = 0; i < pincodeArrayList.size(); i++) {
+
+                                        officeList = pincodeArrayList.get(i).getPostOffice();
+                                        try {
+                                            Log.i("City List", officeList.toString());
+                                            pincodeAdapter = new PincodeAdapter(getActivity(), officeList);
+                                            listviewPincode.setAdapter(pincodeAdapter);
+                                            pincodeAdapter.notifyDataSetChanged();
+
+                                        }catch (Exception e){
+                                            pincodeAdapter = new PincodeAdapter(getActivity(), officeList);
+                                            listviewPincode.setAdapter(pincodeAdapter);
+                                            pincodeAdapter.notifyDataSetChanged();
+                                            Toast.makeText(getActivity(), "Message: No records found", Toast.LENGTH_SHORT).show();
+                                        }
+
+
+                                    }
+                        }else {
+
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<List<PostOfficePincode>> call, Throwable t) {
+
+                    }
+                });
+        }else {
+            Toast.makeText(getActivity(), "Please connect to internet.", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void getSearchPincodeMethod(String pincode) {
+
+        if(ConnectivityReceiver.isConnected()) {
+
+            customerCreationInterface = Customer_Client.getClient().create(CustomerCreationInterface.class);
+            Call<List<PostOfficePincode>> listCall = customerCreationInterface.getPincode(Integer.parseInt(pincode));
+            listCall.enqueue(new Callback<List<PostOfficePincode>>() {
+                @Override
+                public void onResponse(Call<List<PostOfficePincode>> call, Response<List<PostOfficePincode>> response) {
+
+                    if(response.isSuccessful() && response.code() == 200){
+
+                        pincodeArrayList = response.body();
+                        for(int i= 0; i < pincodeArrayList.size();i++){
+
+                           officeList= pincodeArrayList.get(i).getPostOffice();
+                           try {
+                               Log.i("City List", "..." + officeList.toString());
+                               pincodeAdapter = new PincodeAdapter(getActivity(), officeList);
+                               listviewPincode.setAdapter(pincodeAdapter);
+                               pincodeAdapter.notifyDataSetChanged();
+                           }catch (Exception e){
+                               pincodeAdapter = new PincodeAdapter(getActivity(), officeList);
+                               listviewPincode.setAdapter(pincodeAdapter);
+                               pincodeAdapter.notifyDataSetChanged();
+                               Toast.makeText(getActivity(), "Message: No records found", Toast.LENGTH_SHORT).show();
+                           }
+                        }
+
+                    }else {
+
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<List<PostOfficePincode>> call, Throwable t) {
+
+                }
+            });
+        }else {
+            Toast.makeText(getActivity(), "Please connect to internet.", Toast.LENGTH_SHORT).show();
+        }
+
+
+
     }
 
 
@@ -367,7 +594,13 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
             }
             Address address = addressList.get(0);
             LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(latLng).title(location));
+            mCurrLocationMarker = mMap.addMarker(new MarkerOptions().position(latLng).title(location));
+
+            dataModel.put("title", location);
+            dataModel.put("snipet", "This is my spot!");
+            dataModel.put("latitude", latLng);;
+
+            markers.put(mCurrLocationMarker, dataModel);
             mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
             Toast.makeText(getActivity(),address.getLatitude()+" "+address.getLongitude(),Toast.LENGTH_LONG).show();
         }
@@ -389,7 +622,43 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
             mMap.setMyLocationEnabled(true);
         }
 
+       mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+           @Override
+           public boolean onMarkerClick(Marker marker) {
+
+               Map dataModel = (Map)markers.get(marker);
+               String title = (String)dataModel.toString();
+               Toast.makeText(getContext(), ""+title, Toast.LENGTH_SHORT).show();
+
+                getPlaceIdFromServer();
+               return false;
+           }
+       });
+
     }
+
+    private void getPlaceIdFromServer() {
+
+        String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+latLng.latitude+","+latLng.longitude+"&key="+GOOGLE_API_KEY;
+        Toast.makeText(getActivity(), ""+url, Toast.LENGTH_SHORT).show();
+        AndroidNetworking.get(url)
+                .setPriority(Priority.LOW)
+                .build()
+                .getAsJSONArray(new JSONArrayRequestListener() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        // do anything with response
+
+                        Log.i("Lat",response.toString());
+                        Toast.makeText(getContext(), ""+response.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                    @Override
+                    public void onError(ANError error) {
+                        // handle error
+                    }
+                });
+    }
+
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
@@ -478,16 +747,24 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
             mCurrLocationMarker.remove();
         }
         //Place current location marker
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
 
 
         Log.i("12343", String.valueOf(latLng));
-
+        tvLatLong.setText("Your Position: " + latLng +"\n Address: "+getCompleteAddressString(location.getLatitude(),location.getLongitude()));
         markerOptions.title("Current Position");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
+        dataModel.put("title", "Current Position");
+        dataModel.put("snipet", "This is my spot!");
+        dataModel.put("latitude", latLng);;
         mCurrLocationMarker = mMap.addMarker(markerOptions);
+
+        markers.put(mCurrLocationMarker, dataModel);
+
+
 
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -498,8 +775,31 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
-    }
 
+    }
+    private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
+        String strAdd = "";
+        Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
+            if (addresses != null) {
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder("");
+
+                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
+                }
+                strAdd = strReturnedAddress.toString();
+                Log.w("My loction address", strReturnedAddress.toString());
+            } else {
+                Log.w("My loction address", "No Address returned!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.w("My loction address", "Canont get Address!");
+        }
+        return strAdd;
+    }
 
     public String getStateJson()
     {
@@ -527,6 +827,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         // Exceptions are returned by JSONObject when the object cannot be created
         try
         {
+            stateList.clear();
             // Convert the string returned to a JSON object
             JSONObject jsonObject=new JSONObject(getStateJson());
             // Get Json array
@@ -571,6 +872,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
     {
         try
         {
+            cityList.clear();
             // Convert the string returned to a JSON object
             JSONObject jsonObject=new JSONObject(getCityJson());
             // Get Json array

@@ -34,7 +34,6 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_marginTop="@dimen/_10sdp"
         android:layout_margin="@dimen/_5sdp"
         android:layout_width="match_parent"
         android:weightSum="1"
@@ -85,6 +84,8 @@
         android:background="@drawable/edit_box"
         android:hint="Enter Pincode"
         android:clickable="false"
+        android:editable="false"
+        android:focusableInTouchMode="false"
         android:focusable="true"
         android:layout_height="40dp"
         />
@@ -102,7 +103,6 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_marginTop="@dimen/_10sdp"
         android:layout_margin="@dimen/_5sdp"
         android:layout_width="match_parent"
         android:weightSum="1"
@@ -157,16 +157,28 @@
         android:id="@+id/btnMap"
         android:text="Google Map"
         />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:id="@+id/latlong"
+        android:textSize="@dimen/_10sdp"
+        android:layout_margin="2dp"
+        android:visibility="gone"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/black"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:id="@+id/linear"
+        android:visibility="gone"
         android:orientation="horizontal">
     <fragment
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:id="@+id/map"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="1dp"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_500sdp">
 

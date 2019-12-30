@@ -13,6 +13,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -61,6 +63,7 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //https://github.com/eddydn/AndroidCameraRecognitionText/blob/master/app/src/main/java/dev/edmt/androidcamerarecognitiontext/MainActivity.java
     }
 
 
@@ -105,6 +108,48 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
         btnUploadGst.setOnClickListener(this);
         btnUploadPan.setOnClickListener(this);
 
+        tvReGST.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(tvGST.getText().toString().equals(tvReGST.getText().toString())){
+                    tvReGST.setError("GST Number matched.");
+                    tvReGST.setError(null);
+                }else {
+                    tvReGST.setError("GST Number and Re enter GST Number not matched.");
+                }
+            }
+        });
+        tvRePan.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(tvPan.getText().toString().equals(tvRePan.getText().toString())){
+                    tvRePan.setError("Pan Number matched.");
+                    tvRePan.setError(null);
+                }else {
+                    tvRePan.setError("Pan Number and Re enter Pan Number not matched.");
+                }
+            }
+        });
         imageView.setOnClickListener(this::onClick);
         imageView1.setOnClickListener(this::onClick);
         btnNext.setOnClickListener(this::onClick);
@@ -166,31 +211,14 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
         if(count == 0) {
             tvGST.setText(imageText);
             tvReGST.setText(imageText);
-            validationGST();
             Toast.makeText(getContext(), "" + imageText, Toast.LENGTH_SHORT).show();
         }else {
             tvPan.setText(imageText);
             tvRePan.setText(imageText);
-            validationPAN();
             Toast.makeText(getActivity(), ""+imageText, Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void validationPAN() {
-        if(tvPan.getText().toString().equals(tvRePan.getText().toString())){
-        }else {
-            tvRePan.setError("GST Number and Reenter GST Number not matched.");
-        }
-    }
-
-    private void validationGST() {
-
-        if(tvGST.getText().toString().equals(tvReGST.getText().toString())){
-        }else {
-            tvReGST.setError("Pan Number and Reenter Pan Number not matched.");
-        }
-
-    }
 
     @Override
     public void onClick(View v) {
