@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="350dp"
+    android:background="@drawable/bg_form_rounded"
+    android:layout_height="550dp">
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/cancel_pincode"
+        android:src="@drawable/multiply"
+        android:layout_gravity="right"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"
+        android:weightSum="1"
+        android:background="@color/white"
+        android:layout_marginRight="5dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/editPincode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_margin="4dp"
+            android:layout_weight="0.6"
+            android:background="@drawable/edit_box"
+            android:clickable="false"
+            android:hint="Enter Pincode/Area name"
+            android:iconifiedByDefault="false" />
+
+
+        <Button
+            android:textSize="@dimen/_10sdp"
+            android:layout_width="wrap_content"
+            android:id="@+id/searhPincode"
+            android:background="@drawable/bg_button_rounded"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:layout_weight=".4"
+            android:layout_height="@dimen/_30sdp"
+            android:text="search" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:weightSum="1"
+        android:id="@+id/linearpin"
+        android:visibility="visible"
+        android:background="@color/colorPrimary"
+        android:layout_marginRight="5dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:text="Pincode"
+            android:layout_weight="0.5"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:text="Area Name"
+            android:layout_weight="0.5"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/recyclerPincode"
+        android:layout_margin="5dp"
+        android:scrollbars="vertical"
+        />
+
+</LinearLayout>

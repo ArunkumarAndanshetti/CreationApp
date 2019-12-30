@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="350dp"
+    android:background="@drawable/bg_form_rounded"
+    android:layout_height="250dp">
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/cancel_city"
+        android:src="@drawable/multiply"
+        android:layout_gravity="right"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:text="Create City"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_18sdp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/create_child"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_margin="5dp"
+        android:background="@drawable/edit_box"
+        android:clickable="false"
+        android:hint="Enter City Name"
+        android:iconifiedByDefault="false" />
+
+
+    <Button
+        android:layout_width="@dimen/_150sdp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_button_rounded"
+        android:text="submit"
+        android:layout_margin="@dimen/_25sdp"
+        android:layout_gravity="center"
+        android:id="@+id/btnchild"
+        android:textColor="@color/black"
+        android:textStyle="bold" />
+
+</LinearLayout>
