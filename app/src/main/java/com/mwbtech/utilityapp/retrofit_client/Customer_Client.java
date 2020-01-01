@@ -1,4 +1,6 @@
-package com.mwbtech.utilityapp;
+package com.mwbtech.utilityapp.retrofit_client;
+
+import com.mwbtech.utilityapp.retrofit_interface.CustomerCreationInterface;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

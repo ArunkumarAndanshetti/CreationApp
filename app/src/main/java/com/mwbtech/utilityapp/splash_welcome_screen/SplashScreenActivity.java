@@ -1,11 +1,15 @@
-package com.mwbtech.utilityapp;
+package com.mwbtech.utilityapp.splash_welcome_screen;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.mwbtech.utilityapp.R;
+
 
 public class SplashScreenActivity extends AppCompatActivity {
 
@@ -19,7 +23,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
             public void run() {
                 // TODO Auto-generated method stub
-                Intent openActivity = new Intent(getApplicationContext(), MainActivity.class);
+                Intent openActivity = new Intent(getApplicationContext(), WelcomeActivity.class);
                 openActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 openActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(openActivity);
@@ -28,4 +32,6 @@ public class SplashScreenActivity extends AppCompatActivity {
             }
         }, SPLASH_TIME_OUT);
     }
+
+
 }

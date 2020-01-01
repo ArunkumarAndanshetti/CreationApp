@@ -1,4 +1,4 @@
-package com.mwbtech.utilityapp;
+package com.mwbtech.utilityapp.bank_details;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -42,6 +42,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
+import com.mwbtech.utilityapp.R;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -421,7 +423,7 @@ public class BankDetailsActvity extends Fragment implements View.OnClickListener
         }
     }
 
-    interface customerTradeFragment {
+    public interface customerTradeFragment {
 
         void callingCustomerTradeFragment(int pos);
 

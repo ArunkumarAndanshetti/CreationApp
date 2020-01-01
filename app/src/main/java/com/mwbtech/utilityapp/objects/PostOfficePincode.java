@@ -1,6 +1,7 @@
-package com.mwbtech.utilityapp;
+package com.mwbtech.utilityapp.objects;
 
 import com.google.gson.annotations.SerializedName;
+import com.mwbtech.utilityapp.objects.Office;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.mwbtech.utilityapp;
+package com.mwbtech.utilityapp.customer_details;
 
 import android.app.Dialog;
 import android.graphics.drawable.ColorDrawable;
@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.mwbtech.utilityapp.R;
 import com.myhexaville.smartimagepicker.ImagePicker;
 
 public class CustomerTrade extends Fragment implements View.OnClickListener{

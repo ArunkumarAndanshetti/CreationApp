@@ -1,4 +1,4 @@
-package com.mwbtech.utilityapp;
+package com.mwbtech.utilityapp.main_page;
 
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -21,6 +21,15 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+import com.mwbtech.utilityapp.R;
+import com.mwbtech.utilityapp.search_page.SearchCustomer;
+import com.mwbtech.utilityapp.bank_details.BankDetailsActvity;
+import com.mwbtech.utilityapp.billing_address.BillingAddresssActivity;
+import com.mwbtech.utilityapp.customer_details.CustomerDetails;
+import com.mwbtech.utilityapp.customer_details.CustomerTrade;
+import com.mwbtech.utilityapp.internet_connection.ConnectivityReceiver;
+import com.mwbtech.utilityapp.internet_connection.MyInternetCheck;
+import com.mwbtech.utilityapp.tax_register.TaxRegistrationActivity;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -30,7 +39,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, CustomerDetails.CallToBillFragment,BillingAddresssActivity.CallToFragment, TaxRegistrationActivity.CallToBankFragment,ConnectivityReceiver.ConnectivityReceiverListener, BankDetailsActvity.customerTradeFragment {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, CustomerDetails.CallToBillFragment, BillingAddresssActivity.CallToFragment, TaxRegistrationActivity.CallToBankFragment, ConnectivityReceiver.ConnectivityReceiverListener, BankDetailsActvity.customerTradeFragment {
 
     private ActionBarDrawerToggle actionBarDrawerToggle;
     DrawerLayout drawer;
@@ -164,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.search_customer:
 
-                startActivity(new Intent(this,SearchCustomer.class));
+                startActivity(new Intent(this, SearchCustomer.class));
                 MainActivity.this.finish();
                 break;
             default:

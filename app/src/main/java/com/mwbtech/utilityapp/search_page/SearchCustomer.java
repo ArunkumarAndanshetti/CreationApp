@@ -1,4 +1,4 @@
-package com.mwbtech.utilityapp;
+package com.mwbtech.utilityapp.search_page;
 
 import android.Manifest;
 import android.app.Dialog;
@@ -6,12 +6,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
@@ -37,7 +35,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -52,6 +49,10 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
+import com.mwbtech.utilityapp.R;
+import com.mwbtech.utilityapp.main_page.MainActivity;
+import com.mwbtech.utilityapp.objects.AtmLocation;
+import com.mwbtech.utilityapp.objects.LatLngBean;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -67,8 +68,6 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
-import static android.Manifest.permission_group.LOCATION;
 
 
 public class SearchCustomer extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback, LocationListener, View.OnClickListener {
@@ -86,8 +85,8 @@ public class SearchCustomer extends AppCompatActivity implements NavigationView.
     private GoogleMap googleMap;
     private ArrayList<LatLng>listLatLng;
     private RelativeLayout rlMapLayout;
-    HashMap<Marker,LatLngBean> hashMapMarker = new HashMap<Marker,LatLngBean>();
-    HashMap<Marker,AtmLocation> hashMapMarkerAtm = new HashMap<Marker,AtmLocation>();
+    HashMap<Marker, LatLngBean> hashMapMarker = new HashMap<Marker,LatLngBean>();
+    HashMap<Marker, AtmLocation> hashMapMarkerAtm = new HashMap<Marker,AtmLocation>();
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
 
@@ -171,7 +170,7 @@ public class SearchCustomer extends AppCompatActivity implements NavigationView.
         switch (menuItem.getItemId()){
 
             case R.id.customer_details:
-                startActivity(new Intent(this,MainActivity.class));
+                startActivity(new Intent(this, MainActivity.class));
                 SearchCustomer.this.finish();
                 break;
             case R.id.search_customer:

@@ -1,4 +1,4 @@
-package com.mwbtech.utilityapp;
+package com.mwbtech.utilityapp.billing_address;
 
 import android.Manifest;
 import android.app.Activity;
@@ -39,23 +39,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -63,10 +54,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.squareup.picasso.Picasso;
+import com.mwbtech.utilityapp.internet_connection.ConnectivityReceiver;
+import com.mwbtech.utilityapp.retrofit_interface.CustomerCreationInterface;
+import com.mwbtech.utilityapp.retrofit_client.Customer_Client;
+import com.mwbtech.utilityapp.objects.Office;
+import com.mwbtech.utilityapp.adapter.PincodeAdapter;
+import com.mwbtech.utilityapp.objects.PostOfficePincode;
+import com.mwbtech.utilityapp.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -604,7 +600,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
     }
 
 
-    interface CallToFragment{
+    public interface CallToFragment{
         void  communicateFragment(int pos);
     }
 

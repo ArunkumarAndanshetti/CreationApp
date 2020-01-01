@@ -20,15 +20,25 @@
     <string name="name">Name</string>
 
 
-    <string-array name="ledger">
 
-        <item name="" />
-        <item name="" />
-        <item name="" />
-        <item name="" />
-        <item name="" />
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
 
-    </string-array>
+    <string name="slide_1_title">Customer Details</string>
+    <string name="slide_1_desc">The easiest way to create customer details!</string>
+
+    <string name="slide_2_title">Billing Address</string>
+    <string name="slide_2_desc">The easiest way to create Billing Address!</string>
+
+    <string name="slide_3_title">Tax Register</string>
+    <string name="slide_3_desc">The easiest way to create Tax Register!</string>
+
+    <string name="slide_4_title">Bank Details</string>
+    <string name="slide_4_desc">The easiest way to create Bank Details!</string>
+
+    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
+    <string name="play_again">Play Again</string>
 
 
 </resources>

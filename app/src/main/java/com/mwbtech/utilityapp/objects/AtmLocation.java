@@ -1,4 +1,4 @@
-package com.mwbtech.utilityapp;
+package com.mwbtech.utilityapp.objects;
 
 import android.graphics.Bitmap;
 

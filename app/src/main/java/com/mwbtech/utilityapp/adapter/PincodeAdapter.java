@@ -1,4 +1,4 @@
-package com.mwbtech.utilityapp;
+package com.mwbtech.utilityapp.adapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,7 +10,8 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.RecyclerView;
+import com.mwbtech.utilityapp.R;
+import com.mwbtech.utilityapp.objects.Office;
 
 import java.util.ArrayList;
 import java.util.List;

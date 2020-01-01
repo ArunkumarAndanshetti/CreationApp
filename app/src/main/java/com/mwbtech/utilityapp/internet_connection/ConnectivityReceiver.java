@@ -1,10 +1,12 @@
-package com.mwbtech.utilityapp;
+package com.mwbtech.utilityapp.internet_connection;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+
+import com.mwbtech.utilityapp.internet_connection.MyInternetCheck;
 
 public class ConnectivityReceiver extends BroadcastReceiver {
 

@@ -1,19 +1,13 @@
-package com.mwbtech.utilityapp;
+package com.mwbtech.utilityapp.tax_register;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -34,18 +28,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.esafirm.imagepicker.features.ImagePicker;
-import com.esafirm.imagepicker.model.Image;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
+import com.mwbtech.utilityapp.main_page.MainActivity;
+import com.mwbtech.utilityapp.R;
 import com.theartofdev.edmodo.cropper.CropImage;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 
 
 public class TaxRegistrationActivity extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -304,7 +292,7 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
 
     }
 
-    interface CallToBankFragment {
+    public interface CallToBankFragment {
         void callingBankingFragment(int pos);
     }
 

@@ -1,4 +1,6 @@
-package com.mwbtech.utilityapp;
+package com.mwbtech.utilityapp.retrofit_interface;
+
+import com.mwbtech.utilityapp.objects.PostOfficePincode;
 
 import java.util.List;
 

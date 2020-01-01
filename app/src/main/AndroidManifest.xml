@@ -14,7 +14,7 @@
 
 
     <application
-        android:name=".MyInternetCheck"
+        android:name=".internet_connection.MyInternetCheck"
         android:allowBackup="true"
         android:icon="@drawable/customer1"
         android:label="@string/app_name"
@@ -27,7 +27,7 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
         <activity
-            android:name=".SplashScreenActivity"
+            android:name=".splash_welcome_screen.SplashScreenActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity" android:theme="@style/AppTheme.NoActionBar"
+        <activity android:name=".main_page.MainActivity" android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/app_name" />
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
         android:theme="@style/AppTheme"/>
@@ -46,13 +46,13 @@
             android:value="AIzaSyD6Rlv6AD9xaIknkRFLgUsi4mP5wxKVCvc"/>
 
 
-        <activity android:name=".SearchCustomer"
+        <activity android:name=".search_page.SearchCustomer"
             android:label="@string/menu_gallery"
             android:theme="@style/AppTheme.NoActionBar"/>
 
 
         <receiver
-            android:name=".ConnectivityReceiver"
+            android:name=".internet_connection.ConnectivityReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -62,6 +62,10 @@
         <activity android:name=".PlacePickerActivity" />
 
         <activity android:name=".DetailsFragment" />
+
+        <activity
+            android:name=".splash_welcome_screen.WelcomeActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.mwbtech.utilityapp;
+package com.mwbtech.utilityapp.customer_details;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -16,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.mwbtech.utilityapp.R;
 
 public class CustomerDetails extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
@@ -127,7 +129,7 @@ public class CustomerDetails extends Fragment implements View.OnClickListener, A
 
     }
 
-    interface CallToBillFragment {
+    public interface CallToBillFragment {
 
         void callingBillingFragment(int pos);
 
