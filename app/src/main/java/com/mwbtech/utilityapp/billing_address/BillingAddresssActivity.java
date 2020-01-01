@@ -56,7 +56,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.mwbtech.utilityapp.Preferences.PrefManager;
 import com.mwbtech.utilityapp.internet_connection.ConnectivityReceiver;
+import com.mwbtech.utilityapp.objects.CustomerCreation;
 import com.mwbtech.utilityapp.retrofit_interface.CustomerCreationInterface;
 import com.mwbtech.utilityapp.retrofit_client.Customer_Client;
 import com.mwbtech.utilityapp.objects.Office;
@@ -129,6 +131,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
     private Map<String, Object> dataModel = new HashMap<>();
     LatLng latLng;
     private final static int PLACE_PICKER_REQUEST = 999;
+    PrefManager prefManager;
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
@@ -162,6 +165,9 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mapFragment.getMapAsync(this);
+        prefManager = new PrefManager(getContext());
+
+        Toast.makeText(getContext(), ""+prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer", CustomerCreation.class), Toast.LENGTH_SHORT).show();
         checkLocationPermission();
         stateList = new ArrayList<>();
         cityList = new ArrayList<>();

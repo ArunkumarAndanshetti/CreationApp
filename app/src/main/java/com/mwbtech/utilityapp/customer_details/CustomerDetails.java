@@ -17,7 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.mwbtech.utilityapp.Preferences.PrefManager;
 import com.mwbtech.utilityapp.R;
+import com.mwbtech.utilityapp.objects.CustomerCreation;
 
 public class CustomerDetails extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
@@ -30,6 +32,7 @@ public class CustomerDetails extends Fragment implements View.OnClickListener, A
     String[] company = {"Select","Proprietorship/Partnership","Pvt Ltd","Public Ltd","Society"};
     ArrayAdapter ledgerAdapter,companyAdapter;
     CallToBillFragment callToBillFragment;
+    private PrefManager prefManager;
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
@@ -56,6 +59,7 @@ public class CustomerDetails extends Fragment implements View.OnClickListener, A
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         customerView = inflater.inflate(R.layout.customer_details, null);
+        prefManager = new PrefManager(getContext());
         btnNext = customerView.findViewById(R.id.btnNext);
         spLedger = customerView.findViewById(R.id.spinnerLedger);
         spCompanyType = customerView.findViewById(R.id.spinnerCompany);
@@ -101,6 +105,10 @@ public class CustomerDetails extends Fragment implements View.OnClickListener, A
         switch (v.getId()){
 
             case R.id.btnNext:
+
+                CustomerCreation customerCreation = new CustomerCreation("arun","hubli");
+                prefManager.saveObjectToSharedPreference(getContext(),"mwb-welcome","customer",customerCreation);
+                Toast.makeText(getContext(), "saved", Toast.LENGTH_SHORT).show();
                 callToBillFragment.callingBillingFragment(pos);
                 break;
 
