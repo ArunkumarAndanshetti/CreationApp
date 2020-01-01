@@ -9,6 +9,7 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -20,9 +21,12 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +48,7 @@ import java.util.List;
 
 
 
-public class TaxRegistrationActivity extends Fragment implements View.OnClickListener {
+public class TaxRegistrationActivity extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     Button btnNext,btnUploadPan,btnUploadGst;
     EditText tvGST,tvPan,tvReGST,tvRePan;
@@ -57,9 +61,10 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
     CallToBankFragment callToBankFragment;
     int pos = 3;
     ImageView gstDoc,panDoc;
-
+    Spinner spTax;
+    String[] tax = {"Select","Register","Unregister"};
     static int IMAGE_PICKER = 12;
-
+    ArrayAdapter taxAdapter;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +94,8 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
        taxView = inflater.inflate(R.layout.tax_registration, null);
         mainActivity = (MainActivity) this.getActivity();
+        spTax = taxView.findViewById(R.id.spinnerTax);
+
         btnNext = taxView.findViewById(R.id.btnNext);
         tvGST = taxView.findViewById(R.id.gstNumber);
         tvPan = taxView.findViewById(R.id.PanNumber);
@@ -107,6 +114,22 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
 
         btnUploadGst.setOnClickListener(this);
         btnUploadPan.setOnClickListener(this);
+
+
+        taxAdapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_list_item_1, android.R.id.text1, tax){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text = (TextView) view.findViewById(android.R.id.text1);
+                text.setTextColor(Color.BLACK);
+                text.setTextSize(18);
+                return view;
+            }
+        };
+        taxAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spTax.setAdapter(taxAdapter);
+        spTax.setOnItemSelectedListener(this);
 
         tvReGST.addTextChangedListener(new TextWatcher() {
             @Override
@@ -155,14 +178,14 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
         btnNext.setOnClickListener(this::onClick);
 
         return taxView;
-
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            Log.i("456",result.toString());
+
             if (resultCode == Activity.RESULT_OK) {
                 Uri resultUri = result.getUri();
                 Log.i("456",resultUri.toString());
@@ -266,6 +289,19 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
                 break;
 
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        String taxType = (String) parent.getItemAtPosition(position);
+        Toast.makeText(getActivity(), ""+taxType, Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 
     interface CallToBankFragment {

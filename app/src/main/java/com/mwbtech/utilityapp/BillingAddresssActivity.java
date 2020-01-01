@@ -52,6 +52,8 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlacePicker;
@@ -82,11 +84,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.LOCATION_SERVICE;
 
 public class BillingAddresssActivity extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener {
 
-    Button btnNext,btnMap;
+    Button btnNext,btnMap,btnSearchPin;
     ImageView search;
     private GoogleMap mMap;
     Location mLastLocation;
@@ -103,8 +106,6 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
     LinearLayout linearLayout;
     public static final String TAG = "AutoCompleteActivity";
     private static final int AUTO_COMP_REQ_CODE = 2;
-    public static PlaceAutocompleteFragment autocompleteFragment;
-    public static AutocompleteFilter autocompleteFilter;
     EditText spState,spCity,spPincode;
     ArrayAdapter arrayAdapterState;
     ArrayAdapter arrayAdapterCity;
@@ -122,13 +123,14 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
     List<PostOfficePincode> pincodeArrayList;
     List<Office> officeList;
     CustomerCreationInterface customerCreationInterface;
-
+    MarkerOptions markerOptions;
     String GOOGLE_API_KEY = "AIzaSyD6Rlv6AD9xaIknkRFLgUsi4mP5wxKVCvc";
 
     LinearLayout linear;
     private Map<Marker, Map<String, Object>> markers = new HashMap<>();
     private Map<String, Object> dataModel = new HashMap<>();
     LatLng latLng;
+    private final static int PLACE_PICKER_REQUEST = 999;
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
@@ -176,7 +178,9 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         spState = billView.findViewById(R.id.spinnerState);
         spCity = billView.findViewById(R.id.spinnerCity);
         spPincode = billView.findViewById(R.id.edPincode);
-        spPincode.setOnClickListener(this::onClick);
+        btnSearchPin = billView.findViewById(R.id.btnSearch);
+        btnSearchPin.setOnClickListener(this::onClick);
+        //spPincode.setOnClickListener(this::onClick);
         tvLatLong = billView.findViewById(R.id.latlong);
         spState.setOnClickListener(this::onClick);
         spCity.setOnClickListener(this::onClick);
@@ -187,10 +191,10 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
         //autocompleteFragment.onActivityResult(requestCode, resultCode, data);
         if(requestCode == AUTO_COMP_REQ_CODE){
-            if (resultCode == Activity.RESULT_OK) {
+            if (resultCode == RESULT_OK) {
                 com.google.android.gms.location.places.Place place = PlaceAutocomplete.getPlace(getActivity(), data);
                 Toast.makeText(getActivity(), "place "+place.toString(),
                         Toast.LENGTH_LONG).show();
@@ -200,9 +204,29 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
             } else if (resultCode == Activity.RESULT_CANCELED) {
 
             }
-            super.onActivityResult(requestCode, resultCode, data);
-        }
 
+        }else if (resultCode == PLACE_PICKER_REQUEST) {
+
+            Place place = PlacePicker.getPlace(getContext(), data);
+            String placeName = String.format("Place: %s", place.getName());
+            Toast.makeText(getActivity(), ""+placeName, Toast.LENGTH_SHORT).show();
+            double latitude = place.getLatLng().latitude;
+            double longitude = place.getLatLng().longitude;
+            MarkerOptions markerOptions = new MarkerOptions();
+            LatLng coordinate = new LatLng(latitude, longitude);
+            markerOptions.position(coordinate);
+            markerOptions.title(placeName); //Here Total Address is address which you want to show on marker
+            mMap.clear();
+            markerOptions.icon(
+                    BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+
+            markerOptions.getPosition();
+            mCurrLocationMarker = mMap.addMarker(markerOptions);
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(coordinate));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        }
+        //super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -411,7 +435,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
 
 
             case R.id.edPincode:
-                mDialogPincode =  new Dialog(getContext());
+                /*mDialogPincode =  new Dialog(getContext());
                 mDialogPincode.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 mDialogPincode.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
                 mDialogPincode.setContentView(R.layout.dialog_pincode_list);
@@ -433,7 +457,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
                         mDialogPincode.dismiss();
 
                     }
-                });
+                });*/
                 /*pincode.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -476,6 +500,30 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
                     getSearchNameOfPincodeMethod(pincode.getText().toString());
                 }
 
+                break;
+            case R.id.btnSearch:
+
+                mDialogPincode =  new Dialog(getContext());
+                mDialogPincode.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                mDialogPincode.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                mDialogPincode.setContentView(R.layout.dialog_pincode_list);
+                mDialogPincode.setCancelable(false);
+                pincode = mDialogPincode.findViewById(R.id.editPincode);
+                listviewPincode = mDialogPincode.findViewById(R.id.recyclerPincode);
+                ImageView pincodeImg = mDialogPincode.findViewById(R.id.cancel_pincode);
+                btnSearch = mDialogPincode.findViewById(R.id.searhPincode);
+                btnSearch.setOnClickListener(this::onClick);
+                pincodeImg.setOnClickListener(this::onClick);
+                mDialogPincode.show();
+                listviewPincode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Office pinName = (Office) parent.getItemAtPosition(position);
+                        spPincode.setText(pinName.getPincode());
+                        mDialogPincode.dismiss();
+
+                    }
+                });
                 break;
         }
     }
@@ -609,6 +657,8 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(getContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -622,42 +672,41 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
             mMap.setMyLocationEnabled(true);
         }
 
-       mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-           @Override
-           public boolean onMarkerClick(Marker marker) {
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
 
-               Map dataModel = (Map)markers.get(marker);
-               String title = (String)dataModel.toString();
-               Toast.makeText(getContext(), ""+title, Toast.LENGTH_SHORT).show();
+                try {
+                    Map dataModel = (Map) markers.get(marker);
+                    String title = (String) dataModel.toString();
+                    Toast.makeText(getContext(), "" + title, Toast.LENGTH_SHORT).show();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
 
-                getPlaceIdFromServer();
-               return false;
-           }
-       });
+                //openPlacePicker();
+                return false;
+            }
+        });
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+
+            @Override
+            public void onInfoWindowClick(Marker position)
+            {
+
+                    Map dataModel = (Map) markers.get(position);
+                    String title = (String) dataModel.toString();
+                    Toast.makeText(getContext(), "" + title, Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
 
     }
 
-    private void getPlaceIdFromServer() {
 
-        String url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+latLng.latitude+","+latLng.longitude+"&key="+GOOGLE_API_KEY;
-        Toast.makeText(getActivity(), ""+url, Toast.LENGTH_SHORT).show();
-        AndroidNetworking.get(url)
-                .setPriority(Priority.LOW)
-                .build()
-                .getAsJSONArray(new JSONArrayRequestListener() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        // do anything with response
 
-                        Log.i("Lat",response.toString());
-                        Toast.makeText(getContext(), ""+response.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                    @Override
-                    public void onError(ANError error) {
-                        // handle error
-                    }
-                });
-    }
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
@@ -748,13 +797,15 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         }
         //Place current location marker
         latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
 
 
         Log.i("12343", String.valueOf(latLng));
         tvLatLong.setText("Your Position: " + latLng +"\n Address: "+getCompleteAddressString(location.getLatitude(),location.getLongitude()));
-        markerOptions.title("Current Position");
+        markerOptions.title("Current Position : " +String.valueOf(latLng));
+        markerOptions.anchor(0.5f, 0.5f);
+        markerOptions.snippet(getCompleteAddressString(location.getLatitude(),location.getLongitude()));
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
 
         dataModel.put("title", "Current Position");
@@ -775,6 +826,17 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
+
+        /*InfoWindowData info = new InfoWindowData();
+        info.setAddress(""+getCompleteAddressString(location.getLatitude(), location.getLongitude()));
+        info.setLatlong("" + latLng);
+        CustomInfoWindowAdapter adapter = new CustomInfoWindowAdapter(getActivity());
+        mMap.setInfoWindowAdapter(adapter);
+        Marker m = mMap.addMarker(markerOptions);
+        m.setTag(info);
+        m.showInfoWindow();
+*/
+
 
     }
     private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {

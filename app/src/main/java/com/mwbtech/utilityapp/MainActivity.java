@@ -30,7 +30,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, CustomerDetails.CallToBillFragment,BillingAddresssActivity.CallToFragment, TaxRegistrationActivity.CallToBankFragment,ConnectivityReceiver.ConnectivityReceiverListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, CustomerDetails.CallToBillFragment,BillingAddresssActivity.CallToFragment, TaxRegistrationActivity.CallToBankFragment,ConnectivityReceiver.ConnectivityReceiverListener, BankDetailsActvity.customerTradeFragment {
 
     private ActionBarDrawerToggle actionBarDrawerToggle;
     DrawerLayout drawer;
@@ -240,5 +240,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onPause() {
         super.onPause();
         unregisterReceiver(connectivityReceiver);
+    }
+
+    @Override
+    public void callingCustomerTradeFragment(int pos) {
+        setCurrentTabFragment(pos);
+        allTabs.getTabAt(pos).select();
     }
 }

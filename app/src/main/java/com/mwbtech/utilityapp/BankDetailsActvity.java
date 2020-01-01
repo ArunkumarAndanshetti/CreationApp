@@ -69,9 +69,29 @@ public class BankDetailsActvity extends Fragment implements View.OnClickListener
     public String DIRECTORY = Environment.getExternalStorageDirectory().getPath() + "/Signature/";
     public String pic_name = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
     public String StoredPath = DIRECTORY + pic_name + ".PNG";
+    customerTradeFragment customerTrade;
+    int pos = 4;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+
+    @Override
+    public void onAttach(Context activity) {
+        super.onAttach(activity);
+        try {
+
+            if(activity instanceof customerTradeFragment) {
+                customerTrade = (customerTradeFragment) activity;
+            }else {
+                throw new RuntimeException(activity.toString()
+                        + " must implement OnGreenFragmentListener");
+            }
+        }catch (ClassCastException e){
+
+        }
     }
     @Nullable
     @Override
@@ -152,6 +172,8 @@ public class BankDetailsActvity extends Fragment implements View.OnClickListener
                 }
                 mSignature.save(view, StoredPath);
                 Toast.makeText(getContext(), "Successfully Saved", Toast.LENGTH_SHORT).show();
+
+                customerTrade.callingCustomerTradeFragment(pos);
                 mDialogSign.dismiss();
                 break;
         }
@@ -398,4 +420,11 @@ public class BankDetailsActvity extends Fragment implements View.OnClickListener
             dirtyRect.bottom = Math.max(lastTouchY, eventY);
         }
     }
+
+    interface customerTradeFragment {
+
+        void callingCustomerTradeFragment(int pos);
+
+    }
+
 }

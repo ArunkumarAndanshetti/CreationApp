@@ -26,7 +26,7 @@
         android:gravity="start"
         android:layout_margin="@dimen/_5sdp"
         android:background="@drawable/edit_box"
-        android:hint="Enter Area"
+        android:hint="Enter Area/Nagar"
         android:clickable="false"
         android:focusable="true"
         android:layout_height="40dp"
@@ -74,21 +74,35 @@
         android:focusable="true"
         android:layout_height="40dp"
         />
-    <EditText
-        android:id="@+id/edPincode"
+
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:gravity="start"
-        android:layout_margin="@dimen/_5sdp"
-        android:inputType="number"
-        android:maxLength="13"
-        android:background="@drawable/edit_box"
-        android:hint="Enter Pincode"
-        android:clickable="false"
-        android:editable="false"
-        android:focusableInTouchMode="false"
-        android:focusable="true"
-        android:layout_height="40dp"
-        />
+        android:weightSum="1"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edPincode"
+            android:layout_width="@dimen/_190sdp"
+            android:layout_height="40dp"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/edit_box"
+            android:gravity="start"
+            android:hint="Enter Pincode"
+            android:inputType="number"
+            android:maxLength="13" />
+        <Button
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:textColor="@color/white"
+            android:layout_margin="@dimen/_5sdp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_button_rounded"
+            android:id="@+id/btnSearch"
+            android:text="Search Pincode"
+            />
+
+    </LinearLayout>
     <!--<EditText
         android:id="@+id/edState"
         android:layout_width="match_parent"

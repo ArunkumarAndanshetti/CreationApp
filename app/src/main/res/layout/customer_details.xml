@@ -17,23 +17,26 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_margin="@dimen/_5sdp"
             android:layout_width="match_parent"
+            android:weightSum="1"
             android:background="@drawable/edit_box"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Ledger Type"
-                android:layout_marginTop="5dp"
                 android:singleLine="true"
+                android:textSize="@dimen/_13sdp"
+                android:layout_weight="0.4"
                 android:layout_marginStart="0dp"
                 android:textColor="@color/black"/>
 
             <Spinner
                 android:id="@+id/spinnerLedger"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:gravity="start"
                 android:hint="Select Category"
                 android:clickable="false"
+                android:layout_weight="0.6"
                 android:focusable="true"
                 android:layout_height="@dimen/_20sdp"
                 />
@@ -57,7 +60,7 @@
             android:gravity="start"
             android:layout_margin="@dimen/_5sdp"
             android:background="@drawable/edit_box"
-            android:hint="Enter Alias Name"
+            android:hint="Enter Alias Name/City Code"
             android:clickable="false"
             android:focusable="true"
             android:layout_height="40dp"
@@ -66,27 +69,27 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_margin="@dimen/_5sdp"
+                android:weightSum="1"
                 android:layout_width="match_parent"
                 android:background="@drawable/edit_box"
                 android:layout_height="wrap_content">
-
-
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/_15sdp"
                     android:layout_height="wrap_content"
                     android:text="Company Type"
-                    android:layout_marginTop="5dp"
                     android:singleLine="true"
+                    android:layout_weight="0.5"
+                    android:textSize="@dimen/_13sdp"
                     android:layout_marginStart="0dp"
                     android:textColor="@color/black"/>
 
                 <Spinner
                     android:id="@+id/spinnerCompany"
-                    android:layout_width="match_parent"
-                    android:gravity="start"
+                    android:layout_width="@dimen/_50sdp"
                     android:hint="Select Category"
                     android:clickable="false"
                     android:focusable="true"
+                    android:layout_weight="0.5"
                     android:layout_height="@dimen/_20sdp"
                     />
 
