@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvAtmIcon"
+        android:src="@drawable/customer1"
+        android:text="Atm Name"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvAtmName"
+        android:layout_gravity="start"
+        android:textSize="@dimen/_18sdp"
+        android:textColor="@color/black"
+        android:text="Atm Name"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvAtmArea"
+        android:textSize="@dimen/_18sdp"
+        android:textColor="@color/black"
+        android:text="Atm Area"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvAtmLat"
+        android:textSize="@dimen/_18sdp"
+        android:textColor="@color/black"
+        android:text="Atm Latitude"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvAtmlong"
+        android:textSize="@dimen/_18sdp"
+        android:textColor="@color/black"
+        android:text="Atm Longitude"/>
+
+
+
+</LinearLayout>
