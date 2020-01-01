@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -19,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -50,6 +52,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -89,7 +92,9 @@ public class SearchCustomer extends AppCompatActivity implements NavigationView.
     LocationRequest mLocationRequest;
 
     ArrayList<AtmLocation> atmLocationArrayList;
-
+    TextView tvAtmName,tvAtmArea,tvAreaLatitude,tvAreaLongitude;
+    ImageView imageView;
+    Dialog mDialog;
 
     //https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=15.3581689,75.1335591&radius=1000&types=bank&sensor=true&key=AIzaSyA8szrI9Ue4EwyUwTgz7Nk0c39qMal0pN4
     //https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=15.3581689,75.1335591&radius=1000&types=atm&sensor=true&key=AIzaSyA8szrI9Ue4EwyUwTgz7Nk0c39qMal0pN4
@@ -458,14 +463,14 @@ public class SearchCustomer extends AppCompatActivity implements NavigationView.
                         public void onInfoWindowClick(Marker position) {
                             AtmLocation bean = hashMapMarkerAtm.get(position);
                             Toast.makeText(getApplicationContext(), bean.getAtmName(), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(SearchCustomer.this,DetailsFragment.class);
+                            /*Intent intent = new Intent(SearchCustomer.this,DetailsFragment.class);
                             intent.putExtra("title",bean.getAtmName());
                             intent.putExtra("snippet",bean.getAtmArea());
                             intent.putExtra("latitude",bean.getAtmLatitube());
                             intent.putExtra("longitude",bean.getAtmLongitude());
                             intent.putExtra("icon",bean.getAtmIcon());
-                            startActivity(intent);
-
+                            startActivity(intent);*/
+                            openDialogMethod(bean.getAtmName(),bean.getAtmArea(),bean.getAtmLatitube(),bean.getAtmLongitude(),bean.getAtmIcon());
                         }
                     });
                 }
@@ -476,6 +481,32 @@ public class SearchCustomer extends AppCompatActivity implements NavigationView.
             e.printStackTrace();
         }
     }
+
+    private void openDialogMethod(String atmName, String atmArea, String atmLatitube, String atmLongitude, String atmIcon) {
+        mDialog = new Dialog(this);
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mDialog.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        mDialog.setContentView(R.layout.details_fragment);
+        mDialog.setCancelable(true);
+        mDialog.show();
+        tvAtmName = mDialog.findViewById(R.id.tvAtmName);
+        tvAtmArea = mDialog.findViewById(R.id.tvAtmArea);
+        tvAreaLatitude = mDialog.findViewById(R.id.tvAtmLat);
+        tvAreaLongitude = mDialog.findViewById(R.id.tvAtmlong);
+        imageView = mDialog.findViewById(R.id.tvAtmIcon);
+
+        Picasso.get()
+                .load(atmIcon)
+                .resize(50, 50)
+                .centerCrop()
+                .into(imageView);
+        tvAtmName.setText("Name : "+atmName);
+        tvAtmArea.setText("Address : "+atmArea);
+        tvAreaLatitude.setText("latitude : "+atmLatitube);
+        tvAreaLongitude.setText("longitude : "+atmLongitude);
+    }
+
     public Bitmap StringToBitMap(String encodedString){
         try {
             byte [] encodeByte= Base64.decode(encodedString,Base64.DEFAULT);

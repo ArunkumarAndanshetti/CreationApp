@@ -66,6 +66,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -112,12 +113,13 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
     List<String> stateList;
     List<String> cityList;
     ArrayAdapter arrayAdapterPincode;
-    Dialog mDialog,mDialogState,mDialogCity,mDialogOther,mDialogPincode;
+    Dialog mDialog,mDialogState,mDialogCity,mDialogOther,mDialogPincode,mDialogOpen;
     EditText dialogState,dialogCity,createCity,pincode;
     ListView listViewState,listViewCity,listviewPincode;
     String cityName,stateName;
     Button btnCreateCity,submit,btnSearch;
 
+    String areaName;
     TextView tvLatLong;
     PincodeAdapter pincodeAdapter;
     List<PostOfficePincode> pincodeArrayList;
@@ -125,7 +127,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
     CustomerCreationInterface customerCreationInterface;
     MarkerOptions markerOptions;
     String GOOGLE_API_KEY = "AIzaSyD6Rlv6AD9xaIknkRFLgUsi4mP5wxKVCvc";
-
+    TextView tvAtmName,tvAtmArea,tvAreaLatitude,tvAreaLongitude;
     LinearLayout linear;
     private Map<Marker, Map<String, Object>> markers = new HashMap<>();
     private Map<String, Object> dataModel = new HashMap<>();
@@ -238,11 +240,13 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
                 break;
 
             case R.id.search:
-                searchLocation(v);
+                if(edSearchLocation.getText().toString().isEmpty()){
+                    edSearchLocation.setError("Enter Area Name");
+                }else {
+                    searchLocation(v);
+                }
                 break;
             case R.id.btnMap:
-
-
                 mDialog = new Dialog(getContext());
                 mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 mDialog.getWindow().setBackgroundDrawable(
@@ -273,7 +277,6 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
                         new ColorDrawable(android.graphics.Color.TRANSPARENT));
                 mDialogState.setContentView(R.layout.dialog_category_list);
                 mDialogState.setCancelable(false);
-
                 dialogState = (EditText)mDialogState.findViewById(R.id.edState);
                 listViewState = (ListView)mDialogState.findViewById(R.id.recyclerCategory);
                 ImageView imageView = (ImageView)mDialogState.findViewById(R.id.cancel_category);
@@ -435,54 +438,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
 
 
             case R.id.edPincode:
-                /*mDialogPincode =  new Dialog(getContext());
-                mDialogPincode.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                mDialogPincode.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                mDialogPincode.setContentView(R.layout.dialog_pincode_list);
-                mDialogPincode.setCancelable(false);
-                pincode = mDialogPincode.findViewById(R.id.editPincode);
-                listviewPincode = mDialogPincode.findViewById(R.id.recyclerPincode);
-                ImageView pincodeImg = mDialogPincode.findViewById(R.id.cancel_pincode);
-                btnSearch = mDialogPincode.findViewById(R.id.searhPincode);
-                btnSearch.setOnClickListener(this::onClick);
-                pincodeImg.setOnClickListener(this::onClick);
-                mDialogPincode.show();
 
-
-                listviewPincode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Office pinName = (Office) parent.getItemAtPosition(position);
-                        spPincode.setText(pinName.getPincode());
-                        mDialogPincode.dismiss();
-
-                    }
-                });*/
-                /*pincode.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        try {
-                            pincodeAdapter.getFilter().filter(s);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
-                        try {
-                            pincodeAdapter.getFilter().filter(s);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                });*/
                 break;
 
             case R.id.cancel_pincode:
@@ -522,6 +478,32 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
                         spPincode.setText(pinName.getPincode());
                         mDialogPincode.dismiss();
 
+                    }
+                });
+
+                pincode.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        try {
+                            pincodeAdapter.getFilter().filter(s);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        try {
+                            pincodeAdapter.getFilter().filter(s);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
                 });
                 break;
@@ -650,6 +632,21 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
 
             markers.put(mCurrLocationMarker, dataModel);
             mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+
+                @Override
+                public void onInfoWindowClick(Marker position)
+                {
+
+                    Map dataModel = (Map) markers.get(position);
+                    String title = (String) dataModel.toString();
+
+                    getCompleteAddressString(address.getLatitude(),address.getLongitude());
+                    //Toast.makeText(getActivity(), ""+dataModel.get("latitude"), Toast.LENGTH_SHORT).show();
+                    openDialogMethod(location,"This is my spot!",getCompleteAddressString(address.getLatitude(),address.getLongitude()));
+
+                }
+            });
             Toast.makeText(getActivity(),address.getLatitude()+" "+address.getLongitude(),Toast.LENGTH_LONG).show();
         }
     }
@@ -679,7 +676,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
                 try {
                     Map dataModel = (Map) markers.get(marker);
                     String title = (String) dataModel.toString();
-                    Toast.makeText(getContext(), "" + title, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "" + title, Toast.LENGTH_SHORT).show();
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -697,7 +694,9 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
 
                     Map dataModel = (Map) markers.get(position);
                     String title = (String) dataModel.toString();
-                    Toast.makeText(getContext(), "" + title, Toast.LENGTH_SHORT).show();
+
+                    //Toast.makeText(getActivity(), ""+dataModel.get("latitude"), Toast.LENGTH_SHORT).show();
+                    openDialogMethod(dataModel.get("title").toString(),dataModel.get("snippet").toString(),tvLatLong.getText().toString());
 
             }
         });
@@ -705,7 +704,24 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
 
     }
 
+    private void openDialogMethod(String title, String snippet, String toString) {
 
+        mDialogOpen = new Dialog(getActivity());
+        mDialogOpen.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mDialogOpen.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        mDialogOpen.setContentView(R.layout.dialog_address);
+        mDialogOpen.setCancelable(true);
+        mDialogOpen.show();
+        tvAtmName = mDialogOpen.findViewById(R.id.tvAtmName);
+        tvAtmArea = mDialogOpen.findViewById(R.id.tvAtmArea);
+        tvAreaLatitude = mDialogOpen.findViewById(R.id.tvAtmLat);
+
+
+        tvAtmName.setText("Name : "+areaName);
+        tvAtmArea.setText("Address : "+snippet);
+        tvAreaLatitude.setText(toString);
+    }
 
 
     protected synchronized void buildGoogleApiClient() {
@@ -801,15 +817,19 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         markerOptions.position(latLng);
 
 
-        Log.i("12343", String.valueOf(latLng));
-        tvLatLong.setText("Your Position: " + latLng +"\n Address: "+getCompleteAddressString(location.getLatitude(),location.getLongitude()));
+        try {
+            Log.i("12343", String.valueOf(latLng));
+            tvLatLong.setText("Your Position: " + latLng + "\n Address: " + getCompleteAddressString(location.getLatitude(), location.getLongitude()));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         markerOptions.title("Current Position : " +String.valueOf(latLng));
         markerOptions.anchor(0.5f, 0.5f);
         markerOptions.snippet(getCompleteAddressString(location.getLatitude(),location.getLongitude()));
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
 
         dataModel.put("title", "Current Position");
-        dataModel.put("snipet", "This is my spot!");
+        dataModel.put("snippet", "This is my spot!");
         dataModel.put("latitude", latLng);;
         mCurrLocationMarker = mMap.addMarker(markerOptions);
 
@@ -827,15 +847,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
 
-        /*InfoWindowData info = new InfoWindowData();
-        info.setAddress(""+getCompleteAddressString(location.getLatitude(), location.getLongitude()));
-        info.setLatlong("" + latLng);
-        CustomInfoWindowAdapter adapter = new CustomInfoWindowAdapter(getActivity());
-        mMap.setInfoWindowAdapter(adapter);
-        Marker m = mMap.addMarker(markerOptions);
-        m.setTag(info);
-        m.showInfoWindow();
-*/
+
 
 
     }
@@ -846,6 +858,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
             List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
             if (addresses != null) {
                 Address returnedAddress = addresses.get(0);
+                areaName = addresses.get(0).getSubLocality();
                 StringBuilder strReturnedAddress = new StringBuilder("");
 
                 for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
@@ -862,6 +875,9 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         }
         return strAdd;
     }
+
+
+
 
     public String getStateJson()
     {

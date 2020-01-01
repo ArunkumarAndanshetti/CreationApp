@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+
+import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class DetailsFragment extends AppCompatActivity {
 
@@ -30,11 +37,18 @@ public class DetailsFragment extends AppCompatActivity {
         tvAreaLatitude = findViewById(R.id.tvAtmLat);
         tvAreaLongitude = findViewById(R.id.tvAtmlong);
         imageView = findViewById(R.id.tvAtmIcon);
-        imageView.setImageBitmap(StringToBitMap(getIntent().getStringExtra("icon")));
-        tvAtmName.setText(getIntent().getStringExtra("title"));
-        tvAtmArea.setText(getIntent().getStringExtra("snippet"));
-        tvAreaLatitude.setText(getIntent().getStringExtra("latitude"));
-        tvAreaLongitude.setText(getIntent().getStringExtra("longitude"));
+
+        Picasso.get()
+                .load(getIntent().getStringExtra("icon"))
+                .resize(50, 50)
+                .centerCrop()
+                .into(imageView);
+
+        Log.i("Icon",getIntent().getStringExtra("icon"));
+        tvAtmName.setText("Name"+getIntent().getStringExtra("title"));
+        tvAtmArea.setText("Area"+getIntent().getStringExtra("snippet"));
+        tvAreaLatitude.setText("lat"+getIntent().getStringExtra("latitude"));
+        tvAreaLongitude.setText("long"+getIntent().getStringExtra("longitude"));
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

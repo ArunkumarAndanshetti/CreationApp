@@ -83,7 +83,7 @@
 
         <EditText
             android:id="@+id/edPincode"
-            android:layout_width="@dimen/_190sdp"
+            android:layout_width="@dimen/_200sdp"
             android:layout_height="40dp"
             android:layout_margin="@dimen/_5sdp"
             android:background="@drawable/edit_box"
@@ -92,14 +92,14 @@
             android:inputType="number"
             android:maxLength="13" />
         <Button
-            android:layout_width="@dimen/_100sdp"
+            android:layout_width="@dimen/_80sdp"
             android:layout_height="@dimen/_30sdp"
             android:textColor="@color/white"
             android:layout_margin="@dimen/_5sdp"
             android:layout_gravity="center"
             android:background="@drawable/bg_button_rounded"
             android:id="@+id/btnSearch"
-            android:text="Search Pincode"
+            android:text="Search"
             />
 
     </LinearLayout>

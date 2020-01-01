@@ -60,6 +60,8 @@
         </receiver>
 
         <activity android:name=".PlacePickerActivity" />
+
+        <activity android:name=".DetailsFragment" />
     </application>
 
 </manifest>
