@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -31,9 +32,15 @@ import androidx.fragment.app.Fragment;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
+import com.mwbtech.utilityapp.Preferences.PrefManager;
 import com.mwbtech.utilityapp.main_page.MainActivity;
 import com.mwbtech.utilityapp.R;
+import com.mwbtech.utilityapp.objects.CustomerCreation;
 import com.theartofdev.edmodo.cropper.CropImage;
+
+import java.io.ByteArrayOutputStream;
+
+import static com.mwbtech.utilityapp.customer_details.CustomerDetails.customerCreation;
 
 
 public class TaxRegistrationActivity extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -53,6 +60,8 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
     String[] tax = {"Select","Register","Unregister"};
     static int IMAGE_PICKER = 12;
     ArrayAdapter taxAdapter;
+    PrefManager prefManager;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +93,8 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
         mainActivity = (MainActivity) this.getActivity();
         spTax = taxView.findViewById(R.id.spinnerTax);
 
+        prefManager = new PrefManager(getContext());
+        Toast.makeText(mainActivity, ""+prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome", "customer",CustomerCreation.class), Toast.LENGTH_SHORT).show();
         btnNext = taxView.findViewById(R.id.btnNext);
         tvGST = taxView.findViewById(R.id.gstNumber);
         tvPan = taxView.findViewById(R.id.PanNumber);
@@ -194,8 +205,17 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
                     methodRecongizerGSTPAN(count);
                 }else if(count == 2){
                     gstDoc.setImageBitmap(image);
+                    try {
+                        customerCreation = new CustomerCreation(customerCreation.getName(), customerCreation.getAddress(), customerCreation.getLocation(), "image1");
+                        prefManager.saveObjectToSharedPreference(getContext(), "mwb-welcome", "customer", customerCreation);
+                        Toast.makeText(getActivity(), "saved", Toast.LENGTH_SHORT).show();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }else {
                     panDoc.setImageBitmap(image);
+                    Log.i("12333",prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome", "customer",CustomerCreation.class).toString());
+                    Toast.makeText(mainActivity, ""+prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome", "customer",CustomerCreation.class), Toast.LENGTH_SHORT).show();
                 }
 
             }else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
@@ -207,6 +227,17 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
         // THIS METHOD SHOULD BE HERE so that ImagePicker works with fragment
     }
 
+
+    public static String encodeTobase64(Bitmap image) {
+        Bitmap immage = image;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        immage.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+
+        Log.d("Image Log:", imageEncoded);
+        return imageEncoded;
+    }
 
     public void methodRecongizerGSTPAN(int count){
         TextRecognizer textRecognizer = new TextRecognizer.Builder(getActivity()).build();

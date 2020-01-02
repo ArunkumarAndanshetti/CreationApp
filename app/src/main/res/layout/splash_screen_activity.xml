@@ -36,6 +36,7 @@
 
         <ProgressBar
             android:layout_width="match_parent"
+            android:indeterminateDrawable="@drawable/progress_circle"
             android:layout_height="wrap_content" />
 
     </LinearLayout>

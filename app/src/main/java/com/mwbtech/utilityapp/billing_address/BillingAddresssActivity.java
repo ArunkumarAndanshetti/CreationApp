@@ -85,6 +85,7 @@ import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.LOCATION_SERVICE;
+import static com.mwbtech.utilityapp.customer_details.CustomerDetails.customerCreation;
 
 public class BillingAddresssActivity extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener {
 
@@ -117,6 +118,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
     String cityName,stateName;
     Button btnCreateCity,submit,btnSearch;
 
+    CustomerCreation creation;
     String areaName;
     TextView tvLatLong;
     PincodeAdapter pincodeAdapter;
@@ -238,7 +240,14 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         switch (v.getId()){
 
             case R.id.btnNext:
-                callToFragment.communicateFragment(pos);
+                try {
+                    customerCreation = new CustomerCreation(customerCreation.getName(), customerCreation.getAddress(), "Deshapnade nagar");
+                    prefManager.saveObjectToSharedPreference(getContext(), "mwb-welcome", "customer", customerCreation);
+                    //prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer",CustomerCreation.class);
+                    callToFragment.communicateFragment(pos);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 break;
 
             case R.id.search:
@@ -249,6 +258,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
                 }
                 break;
             case R.id.btnMap:
+
                 mDialog = new Dialog(getContext());
                 mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 mDialog.getWindow().setBackgroundDrawable(

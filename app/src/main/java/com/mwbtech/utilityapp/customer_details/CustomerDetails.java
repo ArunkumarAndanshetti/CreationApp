@@ -33,6 +33,7 @@ public class CustomerDetails extends Fragment implements View.OnClickListener, A
     ArrayAdapter ledgerAdapter,companyAdapter;
     CallToBillFragment callToBillFragment;
     private PrefManager prefManager;
+    public static CustomerCreation customerCreation;
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
@@ -106,7 +107,7 @@ public class CustomerDetails extends Fragment implements View.OnClickListener, A
 
             case R.id.btnNext:
 
-                CustomerCreation customerCreation = new CustomerCreation("arun","hubli");
+                customerCreation = new CustomerCreation("arun","hubli");
                 prefManager.saveObjectToSharedPreference(getContext(),"mwb-welcome","customer",customerCreation);
                 Toast.makeText(getContext(), "saved", Toast.LENGTH_SHORT).show();
                 callToBillFragment.callingBillingFragment(pos);
