@@ -43,7 +43,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.basgeekball.awesomevalidation.AwesomeValidation;
+import com.basgeekball.awesomevalidation.ValidationStyle;
+import com.basgeekball.awesomevalidation.utility.RegexTemplate;
 import com.mwbtech.utilityapp.R;
+import com.mwbtech.utilityapp.objects.CustomerCreation;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,6 +56,9 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import static com.mwbtech.utilityapp.main_page.MainActivity.customerCreation;
+import static com.mwbtech.utilityapp.main_page.MainActivity.prefManager;
 
 public class BankDetailsActvity extends Fragment implements View.OnClickListener {
 
@@ -73,7 +80,8 @@ public class BankDetailsActvity extends Fragment implements View.OnClickListener
     public String StoredPath = DIRECTORY + pic_name + ".PNG";
     customerTradeFragment customerTrade;
     int pos = 4;
-
+    AwesomeValidation awesomeValidation;
+    EditText edBankName,edBranch,edCity,edAccNo,edIfsc,edComment;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,9 +107,14 @@ public class BankDetailsActvity extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bankView = inflater.inflate(R.layout.bank_details, null);
-        //edExpiryDate = bankView.findViewById(R.id.edInsuranceDate);
+        awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
         btnNext = bankView.findViewById(R.id.btnNext);
-//        edExpiryDate.setOnClickListener(this);
+
+        edBankName = bankView.findViewById(R.id.edBankName);
+        edBranch = bankView.findViewById(R.id.edBranch);
+        edCity = bankView.findViewById(R.id.edBankCity);
+        edAccNo = bankView.findViewById(R.id.edAccountNo);
+        edIfsc = bankView.findViewById(R.id.edIFSC);
         btnNext.setOnClickListener(this::onClick);
         isReadStoragePermissionGranted();
         isWriteStoragePermissionGranted();
@@ -109,58 +122,50 @@ public class BankDetailsActvity extends Fragment implements View.OnClickListener
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        validationMethod();
+    }
+
+    private void validationMethod() {
+
+        awesomeValidation.addValidation(getActivity(),R.id.edBankName, RegexTemplate.NOT_EMPTY, R.string.bank_name);
+        awesomeValidation.addValidation(getActivity(),R.id.edBranch,RegexTemplate.NOT_EMPTY, R.string.branch);
+        awesomeValidation.addValidation(getActivity(),R.id.edBankCity,RegexTemplate.NOT_EMPTY, R.string.bank_city);
+        awesomeValidation.addValidation(getActivity(),R.id.edAccountNo,RegexTemplate.NOT_EMPTY, R.string.acc_no);
+        awesomeValidation.addValidation(getActivity(),R.id.edIFSC, RegexTemplate.NOT_EMPTY,R.string.ifsc_code);
+
+    }
+
+    @Override
     public void onClick(View v) {
 
         switch (v.getId()) {
-
-            /*case R.id.edInsuranceDate:
-                mDialog = new Dialog(getContext());
-                mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                mDialog.getWindow().setBackgroundDrawable(
-                        new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                mDialog.setContentView(R.layout.dialog_calendar);
-                mDialog.setCancelable(false);
-                mDialog.show();
-                calendarView = (CalendarView) mDialog.findViewById(R.id.calendarView);
-                cancleCalendar = mDialog.findViewById(R.id.cancel_calendar);
-                cancleCalendar.setOnClickListener(this::onClick);
-                calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-                    @Override
-                    public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int dayOfMonth) {
-
-                        String msg = "Selected date Day: " + dayOfMonth + " Month : " + (month + 1) + " Year " + year;
-                        String date = String.valueOf(dayOfMonth+"/"+(month + 1)+"/"+year);
-                        Toast.makeText(getActivity(), date, Toast.LENGTH_SHORT).show();
-                        edExpiryDate.setText(""+date);
-                        mDialog.dismiss();
-                    }
-                });
-                break;
-            case R.id.cancel_calendar:
-                mDialog.dismiss();
-                break;*/
             case R.id.cancel_sign:
                 mDialogSign.dismiss();
                 break;
             case R.id.btnNext:
-                mDialogSign = new Dialog(getContext());
-                mDialogSign.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                mDialogSign.getWindow().setBackgroundDrawable(
-                        new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                mDialogSign.setContentView(R.layout.dialog_signature);
-                mDialogSign.setCancelable(false);
-                mDialogSign.show();
-                btnClear = (Button) mDialogSign.findViewById(R.id.btnclear);
-                btnSave = (Button) mDialogSign.findViewById(R.id.btnsave);
-                canvasLL = (LinearLayout) mDialogSign.findViewById(R.id.canvasLL);
-                cancel_sign = mDialogSign.findViewById(R.id.cancel_sign);
-                cancel_sign.setOnClickListener(this::onClick);
-                mSignature = new Signature(getContext(), null);
-                mSignature.setBackgroundColor(Color.WHITE);
-                canvasLL.addView(mSignature, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                view = canvasLL;
-                btnClear.setOnClickListener(this::onClick);
-                btnSave.setOnClickListener(this::onClick);
+                if(awesomeValidation.validate()) {
+                    mDialogSign = new Dialog(getContext());
+                    mDialogSign.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    mDialogSign.getWindow().setBackgroundDrawable(
+                            new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                    mDialogSign.setContentView(R.layout.dialog_signature);
+                    mDialogSign.setCancelable(false);
+                    mDialogSign.show();
+                    edComment = mDialogSign.findViewById(R.id.edComment);
+                    btnClear = (Button) mDialogSign.findViewById(R.id.btnclear);
+                    btnSave = (Button) mDialogSign.findViewById(R.id.btnsave);
+                    canvasLL = (LinearLayout) mDialogSign.findViewById(R.id.canvasLL);
+                    cancel_sign = mDialogSign.findViewById(R.id.cancel_sign);
+                    cancel_sign.setOnClickListener(this::onClick);
+                    mSignature = new Signature(getContext(), null);
+                    mSignature.setBackgroundColor(Color.WHITE);
+                    canvasLL.addView(mSignature, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    view = canvasLL;
+                    btnClear.setOnClickListener(this::onClick);
+                    btnSave.setOnClickListener(this::onClick);
+                }
                 break;
             case R.id.btnclear:
                 mSignature.clear();
@@ -173,8 +178,10 @@ public class BankDetailsActvity extends Fragment implements View.OnClickListener
                     file.mkdirs();
                 }
                 mSignature.save(view, StoredPath);
-                Toast.makeText(getContext(), "Successfully Saved", Toast.LENGTH_SHORT).show();
-
+                CustomerCreation creation = prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer", CustomerCreation.class);
+                customerCreation = new CustomerCreation(creation.getLedgerType(), creation.getFirmName(), creation.getCompanyType(), creation.getName(), creation.getEmailID(), creation.getMobileNumber(), creation.getMobileNumber2(), creation.getTelephoneNumber(), creation.getBillingAddress(), creation.getArea(), creation.getCity(), creation.getCityCode(), creation.getState(), creation.getPincode(), creation.getLattitude(), creation.getLangitude(), creation.getRegistrationType(), creation.getTinNumber(), creation.getPanNumber(), creation.getGstImage(), creation.getPanImage(),edBankName.getText().toString(),edBranch.getText().toString(),edCity.getText().toString(),edAccNo.getText().toString(),edIfsc.getText().toString(),StoredPath,edComment.getText().toString());
+                prefManager.saveObjectToSharedPreference(getContext(), "mwb-welcome", "customer", customerCreation);
+                Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
                 customerTrade.callingCustomerTradeFragment(pos);
                 mDialogSign.dismiss();
                 break;

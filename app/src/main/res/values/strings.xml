@@ -9,14 +9,14 @@
 
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Search customer</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_slideshow">Update customer</string>
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
 
     <string name="open">open</string>
     <string name="close">close</string>
-    <string name="customer_details">Customer Details</string>
+    <string name="customer_details">List Customer Details</string>
     <string name="name">Name</string>
 
 
@@ -39,6 +39,28 @@
 
     <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
     <string name="play_again">Play Again</string>
+    <string name="firmname">Enter FirmName</string>
+    <string name="customername">Enter Customer Name</string>
+    <string name="email_id">Enter Email id</string>
+    <string name="owner_no">Enter Owner Mobile Number</string>
+    <string name="mobile_no">Enter Alternative Mobile Number</string>
+    <string name="ledger_spinner">Select ledger type</string>
+    <string name="company_spinner">Select Company Type</string>
+    <string name="telephone_bo">Enter Telephone Number</string>
+    <string name="city_spinner">Select city</string>
+    <string name="state_spinner">Select State</string>
+    <string name="bill_address">Enter Building/Road Address</string>
+    <string name="area">Enter Area/Nagar</string>
+    <string name="city_code">Enter City Code</string>
+    <string name="pincode">Enter Pincode</string>
+    <string name="tax_spinner">Select Taxation Yype</string>
+    <string name="gst_no">Enter GST Number</string>
+    <string name="pan_no">Enter Pan Number</string>
+    <string name="bank_name">Enter Bank Name</string>
+    <string name="branch">Enter Branch</string>
+    <string name="bank_city">Enter City</string>
+    <string name="acc_no">Enter Account Number</string>
+    <string name="ifsc_code">Enter IFSC Code</string>
 
 
 </resources>

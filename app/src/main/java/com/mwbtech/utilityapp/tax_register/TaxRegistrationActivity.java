@@ -29,6 +29,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.basgeekball.awesomevalidation.AwesomeValidation;
+import com.basgeekball.awesomevalidation.ValidationHolder;
+import com.basgeekball.awesomevalidation.ValidationStyle;
+import com.basgeekball.awesomevalidation.utility.RegexTemplate;
+import com.basgeekball.awesomevalidation.utility.custom.CustomErrorReset;
+import com.basgeekball.awesomevalidation.utility.custom.CustomValidation;
+import com.basgeekball.awesomevalidation.utility.custom.CustomValidationCallback;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
@@ -40,7 +47,8 @@ import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.ByteArrayOutputStream;
 
-import static com.mwbtech.utilityapp.customer_details.CustomerDetails.customerCreation;
+import static com.mwbtech.utilityapp.main_page.MainActivity.customerCreation;
+import static com.mwbtech.utilityapp.main_page.MainActivity.prefManager;
 
 
 public class TaxRegistrationActivity extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -60,8 +68,9 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
     String[] tax = {"Select","Register","Unregister"};
     static int IMAGE_PICKER = 12;
     ArrayAdapter taxAdapter;
-    PrefManager prefManager;
-
+    String taxType;
+    AwesomeValidation awesomeValidation;
+    String result3,result4,gstImage = null,panImage = null;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +102,9 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
         mainActivity = (MainActivity) this.getActivity();
         spTax = taxView.findViewById(R.id.spinnerTax);
 
-        prefManager = new PrefManager(getContext());
+        awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
+        prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome", "customer",CustomerCreation.class);
+        Log.i("12233",prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome", "customer",CustomerCreation.class).toString());
         Toast.makeText(mainActivity, ""+prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome", "customer",CustomerCreation.class), Toast.LENGTH_SHORT).show();
         btnNext = taxView.findViewById(R.id.btnNext);
         tvGST = taxView.findViewById(R.id.gstNumber);
@@ -179,6 +190,44 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
         return taxView;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        validationMethod();
+    }
+
+    private void validationMethod() {
+
+        awesomeValidation.addValidation(getActivity(),R.id.gstNumber, RegexTemplate.NOT_EMPTY, R.string.gst_no);
+        awesomeValidation.addValidation(getActivity(),R.id.PanNumber,RegexTemplate.NOT_EMPTY, R.string.pan_no);
+        awesomeValidation.addValidation(getActivity(),R.id.spinnerTax,new CustomValidation() {
+            @Override
+            public boolean compare(ValidationHolder validationHolder) {
+                if (((Spinner) validationHolder.getView()).getSelectedItem().toString().equals("Select")) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }, new CustomValidationCallback() {
+            @Override
+            public void execute(ValidationHolder validationHolder) {
+                TextView textViewError = (TextView) ((Spinner) validationHolder.getView()).getSelectedView();
+                textViewError.setError(validationHolder.getErrMsg());
+                textViewError.setTextColor(Color.RED);
+            }
+        }, new CustomErrorReset() {
+            @Override
+            public void reset(ValidationHolder validationHolder) {
+                TextView textViewError = (TextView) ((Spinner) validationHolder.getView()).getSelectedView();
+                textViewError.setError(null);
+                textViewError.setTextColor(Color.BLACK);
+            }
+        }, R.string.tax_spinner);
+
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -206,16 +255,21 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
                 }else if(count == 2){
                     gstDoc.setImageBitmap(image);
                     try {
-                        customerCreation = new CustomerCreation(customerCreation.getName(), customerCreation.getAddress(), customerCreation.getLocation(), "image1");
-                        prefManager.saveObjectToSharedPreference(getContext(), "mwb-welcome", "customer", customerCreation);
-                        Toast.makeText(getActivity(), "saved", Toast.LENGTH_SHORT).show();
+                        result3 = resultUri.toString().replace("file://","");
+                        //customerCreation = new CustomerCreation(customerCreation.getName(), customerCreation.getAddress(), customerCreation.getLocation(), getPathMethod(result3));
+                        //prefManager.saveObjectToSharedPreference(getContext(), "mwb-welcome", "customer", customerCreation);
+                        //Toast.makeText(getActivity(), "saved", Toast.LENGTH_SHORT).show();
+                        //Log.i("823",decodeBase64(customerCreation.getImage()).toString());
+                        //panDoc.setImageBitmap(decodeBase64(customerCreation.getImage()));
                     }catch (Exception e){
                         e.printStackTrace();
                     }
                 }else {
+                    //panDoc.setImageBitmap(decodeBase64(customerCreation.getImage()));
                     panDoc.setImageBitmap(image);
+                    result4 = resultUri.toString().replace("file://","");
                     Log.i("12333",prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome", "customer",CustomerCreation.class).toString());
-                    Toast.makeText(mainActivity, ""+prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome", "customer",CustomerCreation.class), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(mainActivity, ""+prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome", "customer",CustomerCreation.class), Toast.LENGTH_SHORT).show();
                 }
 
             }else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
@@ -228,15 +282,25 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
     }
 
 
-    public static String encodeTobase64(Bitmap image) {
-        Bitmap immage = image;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        immage.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] b = baos.toByteArray();
-        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
 
-        Log.d("Image Log:", imageEncoded);
-        return imageEncoded;
+    private String getPathMethod(String toString) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        Bitmap bitmap = BitmapFactory.decodeFile(toString);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 80, baos);
+        //int nh = (int) ( bitmap.getHeight() * (512.0 / bitmap.getWidth()));
+        //Bitmap.createScaledBitmap(bitmap, 512, nh, true);
+        byte[] imageBytes = baos.toByteArray();
+        String imageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        Log.i("Encode",imageString);
+        return imageString;
+    }
+
+
+    public static Bitmap decodeBase64(String input) {
+        byte[] decodedByte = Base64.decode(input, 0);
+        return BitmapFactory
+                .decodeByteArray(decodedByte, 0, decodedByte.length);
     }
 
     public void methodRecongizerGSTPAN(int count){
@@ -304,7 +368,29 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
                 break;
             case R.id.btnNext:
 
-                callToBankFragment.callingBankingFragment(pos);
+                if(awesomeValidation.validate()) {
+
+                    if(result3 == null){
+                        gstImage = null;
+                    }else {
+                        gstImage = getPathMethod(result3);
+                    }
+                    if(result4 == null) {
+                        panImage = null;
+                    }else {
+                        panImage = getPathMethod(result4);
+                    }
+                    try {
+
+                        CustomerCreation creation = prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer", CustomerCreation.class);
+                        customerCreation = new CustomerCreation(creation.getLedgerType(), creation.getFirmName(), creation.getCompanyType(), creation.getName(), creation.getEmailID(), creation.getMobileNumber(), creation.getMobileNumber2(), creation.getTelephoneNumber(), creation.getBillingAddress(), creation.getArea(), creation.getCity(), creation.getCityCode(), creation.getState(), creation.getPincode(), creation.getLattitude(), creation.getLangitude(), taxType, tvGST.getText().toString(), tvPan.getText().toString(), gstImage, panImage);
+                        prefManager.saveObjectToSharedPreference(getContext(), "mwb-welcome", "customer", customerCreation);
+                        Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
+                        callToBankFragment.callingBankingFragment(pos);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
                 break;
 
         }
@@ -313,7 +399,7 @@ public class TaxRegistrationActivity extends Fragment implements View.OnClickLis
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-        String taxType = (String) parent.getItemAtPosition(position);
+        taxType = (String) parent.getItemAtPosition(position);
         Toast.makeText(getActivity(), ""+taxType, Toast.LENGTH_SHORT).show();
 
     }

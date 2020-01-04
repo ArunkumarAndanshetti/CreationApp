@@ -30,6 +30,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.basgeekball.awesomevalidation.AwesomeValidation;
+import com.basgeekball.awesomevalidation.ValidationHolder;
+import com.basgeekball.awesomevalidation.ValidationStyle;
+import com.basgeekball.awesomevalidation.utility.RegexTemplate;
+import com.basgeekball.awesomevalidation.utility.custom.CustomErrorReset;
+import com.basgeekball.awesomevalidation.utility.custom.CustomValidation;
+import com.basgeekball.awesomevalidation.utility.custom.CustomValidationCallback;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -85,7 +93,8 @@ import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.LOCATION_SERVICE;
-import static com.mwbtech.utilityapp.customer_details.CustomerDetails.customerCreation;
+import static com.mwbtech.utilityapp.main_page.MainActivity.customerCreation;
+import static com.mwbtech.utilityapp.main_page.MainActivity.prefManager;
 
 public class BillingAddresssActivity extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener {
 
@@ -133,7 +142,12 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
     private Map<String, Object> dataModel = new HashMap<>();
     LatLng latLng;
     private final static int PLACE_PICKER_REQUEST = 999;
-    PrefManager prefManager;
+    AwesomeValidation awesomeValidation;
+
+    ArrayList<LatLng> MarkerPoints;
+    double latitude,longitude;
+    EditText edBillingAddress,edArea,edCityCode,edPincode;
+
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
@@ -164,11 +178,11 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         billView= inflater.inflate(R.layout.billing_address, null);
+        awesomeValidation  = new AwesomeValidation(ValidationStyle.BASIC);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mapFragment.getMapAsync(this);
-        prefManager = new PrefManager(getContext());
-
+        MarkerPoints = new ArrayList<>();
         Toast.makeText(getContext(), ""+prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer", CustomerCreation.class), Toast.LENGTH_SHORT).show();
         checkLocationPermission();
         stateList = new ArrayList<>();
@@ -178,6 +192,10 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         linearLayout = billView.findViewById(R.id.linear);
         linear = billView.findViewById(R.id.linearpin);
         btnMap = billView.findViewById(R.id.btnMap);
+        edBillingAddress = billView.findViewById(R.id.edBillAddress);
+        edArea = billView.findViewById(R.id.edArea);
+        edCityCode = billView.findViewById(R.id.edCityCode);
+        edPincode = billView.findViewById(R.id.edPincode);
         edSearchLocation = billView.findViewById(R.id.editText);
         search = billView.findViewById(R.id.search);
         btnNext = billView.findViewById(R.id.btnNext);
@@ -194,6 +212,25 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         btnNext.setOnClickListener(this);
         search.setOnClickListener(this::onClick);
         return billView;
+    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        validationMethod();
+    }
+
+    private void validationMethod() {
+
+        awesomeValidation.addValidation(getActivity(),R.id.edBillAddress, RegexTemplate.NOT_EMPTY, R.string.bill_address);
+        awesomeValidation.addValidation(getActivity(),R.id.edArea,RegexTemplate.NOT_EMPTY, R.string.area);
+        awesomeValidation.addValidation(getActivity(),R.id.edCityCode,RegexTemplate.NOT_EMPTY, R.string.city_code);
+        awesomeValidation.addValidation(getActivity(),R.id.edPincode,RegexTemplate.NOT_EMPTY, R.string.pincode);
+
+        awesomeValidation.addValidation(getActivity(),R.id.spinnerCity, RegexTemplate.NOT_EMPTY,R.string.city_spinner);
+        awesomeValidation.addValidation(getActivity(),R.id.spinnerState,RegexTemplate.NOT_EMPTY, R.string.state_spinner);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -240,13 +277,21 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         switch (v.getId()){
 
             case R.id.btnNext:
-                try {
-                    customerCreation = new CustomerCreation(customerCreation.getName(), customerCreation.getAddress(), "Deshapnade nagar");
-                    prefManager.saveObjectToSharedPreference(getContext(), "mwb-welcome", "customer", customerCreation);
-                    //prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer",CustomerCreation.class);
-                    callToFragment.communicateFragment(pos);
-                }catch (Exception e){
-                    e.printStackTrace();
+                if(awesomeValidation.validate()){
+
+                    try {
+
+                        if (latitude == 0.0 && longitude == 0.0){
+                            Toast.makeText(getActivity(), "Please press the google map button and check it", Toast.LENGTH_SHORT).show();
+                        }
+                        CustomerCreation creation = prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer", CustomerCreation.class);
+                        customerCreation = new CustomerCreation(creation.getLedgerType(), creation.getFirmName(), creation.getCompanyType(),creation.getName(),creation.getEmailID(),creation.getMobileNumber(),creation.getMobileNumber2(),creation.getTelephoneNumber(),edBillingAddress.getText().toString(),edArea.getText().toString(),cityName,edCityCode.getText().toString(),stateName,Integer.parseInt(edPincode.getText().toString()),latitude,longitude);
+                        prefManager.saveObjectToSharedPreference(getContext(), "mwb-welcome", "customer", customerCreation);
+                        prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer",CustomerCreation.class);
+                        callToFragment.communicateFragment(pos);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
                 break;
 
@@ -309,7 +354,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
                 listViewState.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        String stateName = (String) listViewState.getItemAtPosition(position);
+                        stateName = (String) listViewState.getItemAtPosition(position);
                         //Toast.makeText(getActivity(),stateName , Toast.LENGTH_LONG).show();
                         spState.setText(stateName);
                         mDialogState.dismiss();
@@ -400,7 +445,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
                 listViewCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        String cityName = (String) listViewCity.getItemAtPosition(position);
+                        cityName = (String) listViewCity.getItemAtPosition(position);
                         //Toast.makeText(getActivity(),cityName , Toast.LENGTH_LONG).show();
                         spCity.setText(cityName);
                         mDialogCity.dismiss();
@@ -713,6 +758,11 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
             }
         });
 
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+            }
+        });
 
     }
 
@@ -824,6 +874,11 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
             mCurrLocationMarker.remove();
         }
         //Place current location marker
+
+
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+
         latLng = new LatLng(location.getLatitude(), location.getLongitude());
         markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
@@ -832,41 +887,42 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         try {
             Log.i("12343", String.valueOf(latLng));
             tvLatLong.setText("Your Position: " + latLng + "\n Address: " + getCompleteAddressString(location.getLatitude(), location.getLongitude()));
+
+            markerOptions.title("Current Position : " +String.valueOf(latLng));
+            markerOptions.anchor(0.5f, 0.5f);
+            markerOptions.snippet(getCompleteAddressString(location.getLatitude(),location.getLongitude()));
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
+            dataModel.put("title", "Current Position");
+            dataModel.put("snippet", "This is my spot!");
+            dataModel.put("latitude", latLng);;
+            mCurrLocationMarker = mMap.addMarker(markerOptions);
+
+            markers.put(mCurrLocationMarker, dataModel);
+
+
+
+            //move map camera
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(20));
+            mMap.getMapType();
+
+            //stop location updates
+            if (mGoogleApiClient != null) {
+                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
-        markerOptions.title("Current Position : " +String.valueOf(latLng));
-        markerOptions.anchor(0.5f, 0.5f);
-        markerOptions.snippet(getCompleteAddressString(location.getLatitude(),location.getLongitude()));
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-
-        dataModel.put("title", "Current Position");
-        dataModel.put("snippet", "This is my spot!");
-        dataModel.put("latitude", latLng);;
-        mCurrLocationMarker = mMap.addMarker(markerOptions);
-
-        markers.put(mCurrLocationMarker, dataModel);
-
-
-
-        //move map camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(20));
-        mMap.getMapType();
-
-        //stop location updates
-        if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        }
-
-
 
 
     }
     private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
         String strAdd = "";
-        Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
         try {
+
+            Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
             List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
             if (addresses != null) {
                 Address returnedAddress = addresses.get(0);

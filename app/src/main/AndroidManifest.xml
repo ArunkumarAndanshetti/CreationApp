@@ -3,29 +3,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.mwbtech.utilityapp">
 
-    <permission android:name="info.androidhive.googlemapsv2.permission.MAPS_RECEIVE" android:protectionLevel="signature" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <permission
+        android:name="info.androidhive.googlemapsv2.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+
     <uses-permission android:name="info.androidhive.googlemapsv2.permission.MAPS_RECEIVE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-
     <application
         android:name=".internet_connection.MyInternetCheck"
         android:allowBackup="true"
-        android:icon="@drawable/customer1"
+        android:icon="@drawable/app_icon"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/customer1"
+        android:roundIcon="@drawable/app_icon"
         android:supportsRtl="true"
+        android:backupAgent="MyBackupAgent"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        android:fullBackupContent="true">
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
+
         <activity
             android:name=".splash_welcome_screen.SplashScreenActivity"
             android:label="@string/app_name"
@@ -37,35 +44,50 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".main_page.MainActivity" android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" />
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-        android:theme="@style/AppTheme"/>
+        <activity
+            android:name=".search_page.ListCustomersActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".customer_details.UpdateCustomerDetails"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".main_page.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/AppTheme" />
+
+
+        <meta-data android:name="com.google.android.backup.api_key"
+            android:value="AEdPqrEAAAAIYWtoLo4wXS3vWApjdqSJ6G49iqg-m94fKCMx6w" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyD6Rlv6AD9xaIknkRFLgUsi4mP5wxKVCvc"/>
+            android:value="AIzaSyD6Rlv6AD9xaIknkRFLgUsi4mP5wxKVCvc" />
 
-
-        <activity android:name=".search_page.SearchCustomer"
+        <activity
+            android:name=".search_page.SearchCustomer"
             android:label="@string/menu_gallery"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver
             android:name=".internet_connection.ConnectivityReceiver"
             android:enabled="true">
             <intent-filter>
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
 
         <activity android:name=".PlacePickerActivity" />
-
         <activity android:name=".DetailsFragment" />
-
         <activity
             android:name=".splash_welcome_screen.WelcomeActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

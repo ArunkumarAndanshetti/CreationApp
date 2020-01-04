@@ -21,7 +21,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+import com.mwbtech.utilityapp.Preferences.PrefManager;
 import com.mwbtech.utilityapp.R;
+import com.mwbtech.utilityapp.objects.CustomerCreation;
+import com.mwbtech.utilityapp.search_page.ListCustomersActivity;
 import com.mwbtech.utilityapp.search_page.SearchCustomer;
 import com.mwbtech.utilityapp.bank_details.BankDetailsActvity;
 import com.mwbtech.utilityapp.billing_address.BillingAddresssActivity;
@@ -39,11 +42,12 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.widget.TextView;
 
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, CustomerDetails.CallToBillFragment, BillingAddresssActivity.CallToFragment, TaxRegistrationActivity.CallToBankFragment, ConnectivityReceiver.ConnectivityReceiverListener, BankDetailsActvity.customerTradeFragment {
 
-    private ActionBarDrawerToggle actionBarDrawerToggle;
-    DrawerLayout drawer;
-    NavigationView navigationView;
+    //private ActionBarDrawerToggle actionBarDrawerToggle;
+    //DrawerLayout drawer;
+    //NavigationView navigationView;
     CoordinatorLayout coordinatorLayout;
     public static MainActivity instance;
     private CustomerDetails customerDetails;
@@ -55,10 +59,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     IntentFilter intentFilter;
     public static ConnectivityReceiver connectivityReceiver;
     Toolbar toolbar;
+    public static PrefManager prefManager;
+    public static CustomerCreation customerCreation;
+    public static int salesmanID = 1599;
+    public static int orgID = 1;
+    public static int createdByID = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle("Customer Creation");
+        customerCreation = new CustomerCreation();
+        prefManager = new PrefManager(this);
         coordinatorLayout = findViewById(R.id.coordinator);
         intentFilter = new IntentFilter();
         connectivityReceiver = new ConnectivityReceiver();
@@ -67,14 +79,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bindWidgetsWithAnEvent();
         setupTabLayout();
         setupTabIcons();
-        drawer = findViewById(R.id.drawer_layout);
+        //drawer = findViewById(R.id.drawer_layout);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer,toolbar,R.string.open, R.string.close);
+        /*actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer,toolbar,R.string.open, R.string.close);
         navigationView = findViewById(R.id.nav_view);
         drawer.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
-        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setNavigationItemSelectedListener(this);*/
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
     }
     private void setupTabIcons() {
         allTabs.getTabAt(0).setIcon(R.drawable.customer1);
@@ -124,18 +140,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         {
             case 0 :
                 replaceFragment(customerDetails);
+
                 break;
             case 1 :
-                replaceFragment(billingAddresssActivity);
+                if(prefManager.getSavedObjectFromPreference(this,"mwb-welcome", "customer", CustomerCreation.class) == null) {
+                    allTabs.getTabAt(0).select();
+                }else {
+                    replaceFragment(billingAddresssActivity);
+                }
                 break;
             case 2 :
-                replaceFragment(taxRegistrationActivity);
+                if(prefManager.getSavedObjectFromPreference(this,"mwb-welcome", "customer", CustomerCreation.class) == null) {
+                    allTabs.getTabAt(1).select();
+                }else {
+                    replaceFragment(taxRegistrationActivity);
+                }
                 break;
             case 3 :
-                replaceFragment(bankDetailsActvity);
+                if(prefManager.getSavedObjectFromPreference(this,"mwb-welcome", "customer", CustomerCreation.class) == null) {
+                    allTabs.getTabAt(2).select();
+                }else {
+                    replaceFragment(bankDetailsActvity);
+                }
                 break;
             case 4:
-                replaceFragment(customerTrade);
+                if(prefManager.getSavedObjectFromPreference(this,"mwb-welcome", "customer", CustomerCreation.class) == null) {
+                    allTabs.getTabAt(3).select();
+                }else {
+                    replaceFragment(customerTrade);
+                }
                 break;
         }
     }
@@ -147,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commit();
     }
-    @Override
+    /*@Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -160,6 +193,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_main_drawer, menu);
         return true;
+    }*/
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, ListCustomersActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        MainActivity.this.finish();
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

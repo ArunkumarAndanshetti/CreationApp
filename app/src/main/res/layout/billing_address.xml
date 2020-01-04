@@ -10,7 +10,7 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/edBankAddress"
+        android:id="@+id/edBillAddress"
         android:layout_width="match_parent"
         android:gravity="start"
         android:layout_margin="@dimen/_5sdp"

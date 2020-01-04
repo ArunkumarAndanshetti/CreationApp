@@ -170,7 +170,7 @@ public class SearchCustomer extends AppCompatActivity implements NavigationView.
         switch (menuItem.getItemId()){
 
             case R.id.customer_details:
-                startActivity(new Intent(this, MainActivity.class));
+                startActivity(new Intent(this, ListCustomersActivity.class));
                 SearchCustomer.this.finish();
                 break;
             case R.id.search_customer:
@@ -462,13 +462,6 @@ public class SearchCustomer extends AppCompatActivity implements NavigationView.
                         public void onInfoWindowClick(Marker position) {
                             AtmLocation bean = hashMapMarkerAtm.get(position);
                             Toast.makeText(getApplicationContext(), bean.getAtmName(), Toast.LENGTH_SHORT).show();
-                            /*Intent intent = new Intent(SearchCustomer.this,DetailsFragment.class);
-                            intent.putExtra("title",bean.getAtmName());
-                            intent.putExtra("snippet",bean.getAtmArea());
-                            intent.putExtra("latitude",bean.getAtmLatitube());
-                            intent.putExtra("longitude",bean.getAtmLongitude());
-                            intent.putExtra("icon",bean.getAtmIcon());
-                            startActivity(intent);*/
                             openDialogMethod(bean.getAtmName(),bean.getAtmArea(),bean.getAtmLatitube(),bean.getAtmLongitude(),bean.getAtmIcon());
                         }
                     });
