@@ -28,6 +28,7 @@ import com.mwbtech.utilityapp.R;
 import com.mwbtech.utilityapp.objects.CustomerCreation;
 import com.mwbtech.utilityapp.retrofit_client.Customer_Client;
 import com.mwbtech.utilityapp.retrofit_interface.CustomerCreationInterface;
+import com.mwbtech.utilityapp.widget.ShowProgressDialog;
 import com.myhexaville.smartimagepicker.ImagePicker;
 
 import retrofit2.Call;
@@ -146,7 +147,7 @@ public class CustomerTrade extends Fragment implements View.OnClickListener{
     }
 
     private void callToServerMethod() {
-        ProgressDialog dialog = createProgressDialog(getContext());
+        ProgressDialog dialog = ShowProgressDialog.createProgressDialog(getContext());
         customerCreationInterface = Customer_Client.getClientCreation().create(CustomerCreationInterface.class);
         Call<CustomerCreation> creationCall = customerCreationInterface.postCustomerCreationMethod(customerCreation);
         creationCall.enqueue(new Callback<CustomerCreation>() {
@@ -174,16 +175,5 @@ public class CustomerTrade extends Fragment implements View.OnClickListener{
 
 
 
-    public ProgressDialog createProgressDialog(Context mContext) {
-        ProgressDialog dialog = new ProgressDialog(mContext);
-        try {
-            dialog.show();
-        } catch (WindowManager.BadTokenException e) {
 
-        }
-        dialog.setCancelable(false);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        dialog.setContentView(R.layout.dialog_layout);
-        return dialog;
-    }
 }
