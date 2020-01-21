@@ -10,7 +10,8 @@ public class PrefManager {
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     Context _context;
-
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor sharedPreferencesEditor;
     // shared pref mode
     int PRIVATE_MODE = 0;
 
@@ -35,22 +36,25 @@ public class PrefManager {
     }
 
 
-    public void saveObjectToSharedPreference(Context context, String preferenceFileName, String serializedObjectKey, Object object) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(preferenceFileName, 0);
-        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+    public void saveObjectToSharedPreference(String serializedObjectKey, Object object) {
         final Gson gson = new Gson();
         String serializedObject = gson.toJson(object);
-        sharedPreferencesEditor.putString(serializedObjectKey, serializedObject);
-        sharedPreferences.edit().commit();
-        sharedPreferencesEditor.apply();
+        editor.putString(serializedObjectKey, serializedObject);
+        pref.edit().commit();
+        editor.apply();
     }
 
     public <GenericClass> GenericClass getSavedObjectFromPreference(Context context, String preferenceFileName, String preferenceKey, Class<GenericClass> classType) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(preferenceFileName, 0);
-        if (sharedPreferences.contains(preferenceKey)) {
+        if (pref.contains(preferenceKey)) {
             final Gson gson = new Gson();
-            return gson.fromJson(sharedPreferences.getString(preferenceKey, ""), classType);
+            return gson.fromJson(pref.getString(preferenceKey, ""), classType);
         }
         return null;
     }
+
+    public void clearPreferences(Context context){
+        editor.clear();
+        editor.commit();
+    }
+
 }

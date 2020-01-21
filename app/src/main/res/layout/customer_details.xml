@@ -116,6 +116,7 @@
             android:hint="Enter Owner Mobile Number"
             android:clickable="false"
             android:inputType="number"
+            android:maxLength="10"
             android:focusable="true"
             android:layout_height="40dp"
             />
@@ -137,7 +138,7 @@
                 android:gravity="start"
                 android:layout_margin="@dimen/_5sdp"
                 android:inputType="number"
-                android:maxLength="13"
+                android:maxLength="10"
                 android:background="@drawable/edit_box"
                 android:hint="Enter Contact Person Mobile Number"
                 android:clickable="false"

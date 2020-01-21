@@ -61,6 +61,7 @@
     <string name="bank_city">Enter City</string>
     <string name="acc_no">Enter Account Number</string>
     <string name="ifsc_code">Enter IFSC Code</string>
+    <string name="validation_email">Enter Valid Email ID</string>
 
 
 </resources>

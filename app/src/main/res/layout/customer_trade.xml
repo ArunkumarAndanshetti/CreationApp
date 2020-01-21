@@ -104,6 +104,6 @@
         android:layout_gravity="center"
         android:background="@drawable/bg_button_rounded"
         android:id="@+id/btnNext"
-        android:text="Next"
+        android:text="SubMit"
         />
 </LinearLayout>

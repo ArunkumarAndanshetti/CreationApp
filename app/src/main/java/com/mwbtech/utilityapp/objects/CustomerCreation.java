@@ -432,43 +432,43 @@ public class CustomerCreation {
 
     @Override
     public String toString() {
-        return "CustomerCreation{" +
-                "ledgerType='" + ledgerType + '\'' +
-                ", firmName='" + firmName + '\'' +
-                ", companyType='" + companyType + '\'' +
-                ", name='" + name + '\'' +
-                ", emailID='" + emailID + '\'' +
-                ", mobileNumber='" + mobileNumber + '\'' +
-                ", mobileNumber2='" + mobileNumber2 + '\'' +
-                ", telephoneNumber='" + telephoneNumber + '\'' +
-                ", billingAddress='" + billingAddress + '\'' +
-                ", area='" + area + '\'' +
-                ", city='" + city + '\'' +
-                ", cityCode='" + cityCode + '\'' +
-                ", state='" + state + '\'' +
-                ", pincode=" + pincode +
-                ", lattitude=" + lattitude +
-                ", langitude=" + langitude +
-                ", registrationType='" + registrationType + '\'' +
-                ", tinNumber='" + tinNumber + '\'' +
-                ", panNumber='" + panNumber + '\'' +
-                ", gstImage='" + gstImage + '\'' +
-                ", panImage='" + panImage + '\'' +
-                ", bankName='" + bankName + '\'' +
-                ", bankBranch='" + bankBranch + '\'' +
-                ", accountNo='" + accountNo + '\'' +
-                ", ifscCode='" + ifscCode + '\'' +
-                ", placeCode='" + placeCode + '\'' +
-                ", bankCity='" + bankCity + '\'' +
-                ", signatureImage='" + signatureImage + '\'' +
-                ", comment='" + comment + '\'' +
-                ", crLimit=" + crLimit +
-                ", crDays=" + crDays +
-                ", noofOutstandingBill=" + noofOutstandingBill +
-                ", openingBalance=" + openingBalance +
-                ", salesmanID=" + salesmanID +
-                ", createdByID=" + createdByID +
-                ", orgID=" + orgID +
-                '}';
+        return "{" +
+                "ledgerType:" + ledgerType +
+                ", firmName:" + firmName +
+                ", companyType:" + companyType +
+                ", name:" + name +
+                ", emailID:" + emailID +
+                ", mobileNumber:" + mobileNumber +
+                ", mobileNumber2:" + mobileNumber2 +
+                ", telephoneNumber:" + telephoneNumber +
+                ", billingAddress:" + billingAddress +
+                ", area:" + area +
+                ", city:" + city +
+                ", cityCode:" + cityCode +
+                ", state:" + state +
+                ", pincode:" + pincode +
+                ", lattitude:" + lattitude +
+                ", langitude:" + langitude +
+                ", registrationType:" + registrationType +
+                ", tinNumber:" + tinNumber +
+                ", panNumber:" + panNumber +
+                ", gstImage:" + gstImage +
+                ", panImage:" + panImage +
+                ", bankName:" + bankName +
+                ", bankBranch:" + bankBranch +
+                ", accountNo:" + accountNo +
+                ", ifscCode:" + ifscCode +
+                ", placeCode:" + placeCode +
+                ", bankCity:" + bankCity +
+                ", signatureImage:" + signatureImage +
+                ", comment:" + comment +
+                ", crLimit:" + crLimit +
+                ", crDays:" + crDays +
+                ", noofOutstandingBill:" + noofOutstandingBill +
+                ", openingBalance:" + openingBalance +
+                ", salesmanID:" + salesmanID +
+                ", createdByID:" + createdByID +
+                ", orgID:" + orgID +
+                "}";
     }
 }

@@ -3,6 +3,7 @@ package com.mwbtech.utilityapp.customer_details;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,9 @@ import com.mwbtech.utilityapp.Preferences.PrefManager;
 import com.mwbtech.utilityapp.R;
 import com.mwbtech.utilityapp.objects.CustomerCreation;
 
+import java.util.regex.Pattern;
+
+import static com.mwbtech.utilityapp.main_page.MainActivity.creation;
 import static com.mwbtech.utilityapp.main_page.MainActivity.customerCreation;
 import static com.mwbtech.utilityapp.main_page.MainActivity.prefManager;
 
@@ -118,7 +122,54 @@ public class CustomerDetails extends Fragment implements View.OnClickListener, A
         spCompanyType.setOnItemSelectedListener(this);
         spLedger.setOnItemSelectedListener(this);
         btnNext.setOnClickListener(this);
+        sharePreferencesMethod();
         return customerView;
+    }
+
+
+    private boolean isValidEmailId(String email){
+
+        return Pattern.compile("^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
+                + "((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+                + "([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+                + "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$").matcher(email).matches();
+    }
+
+
+    private void sharePreferencesMethod() {
+
+        creation = prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer", CustomerCreation.class);
+        if(creation != null){
+            if(creation.getLedgerType().equals("Credit")){
+                spLedger.setSelection(1);
+            }else {
+                spLedger.setSelection(2);
+            }
+
+            if(creation.getCompanyType().equals("Proprietorship/Partnership")){
+                spCompanyType.setSelection(1);
+
+            }else if(creation.getCompanyType().equals("Pvt Ltd")){
+                spCompanyType.setSelection(2);
+
+            }else if(creation.getCompanyType().equals("Public Ltd")){
+
+                spCompanyType.setSelection(3);
+            }else {
+                spCompanyType.setSelection(4);
+            }
+            edFirmName.setText(""+creation.getFirmName());
+            edOwnerName.setText(""+creation.getName());
+            edMobileNo.setText(""+creation.getMobileNumber());
+            edMobileNo1.setText(""+creation.getMobileNumber2());
+            edTelephone.setText(""+creation.getTelephoneNumber());
+            edEmailId.setText(""+creation.getEmailID());
+
+        }
+
+
     }
 
 
@@ -133,6 +184,7 @@ public class CustomerDetails extends Fragment implements View.OnClickListener, A
         awesomeValidation.addValidation(getActivity(),R.id.edFirmName, RegexTemplate.NOT_EMPTY, R.string.firmname);
         awesomeValidation.addValidation(getActivity(),R.id.edCustomer,RegexTemplate.NOT_EMPTY, R.string.customername);
         awesomeValidation.addValidation(getActivity(),R.id.edEmailId,RegexTemplate.NOT_EMPTY, R.string.email_id);
+        awesomeValidation.addValidation(getActivity(),R.id.edEmailId, Patterns.EMAIL_ADDRESS, R.string.validation_email);
         awesomeValidation.addValidation(getActivity(),R.id.edOwnerNo,RegexTemplate.NOT_EMPTY, R.string.owner_no);
         awesomeValidation.addValidation(getActivity(), R.id.edMobile, RegexTemplate.NOT_EMPTY, R.string.mobile_no);
         awesomeValidation.addValidation(getActivity(), R.id.edtelephone, RegexTemplate.NOT_EMPTY, R.string.telephone_bo);
@@ -197,8 +249,8 @@ public class CustomerDetails extends Fragment implements View.OnClickListener, A
 
                 if(awesomeValidation.validate()){
 
-                    customerCreation = new CustomerCreation(ledgerType,edFirmName.getText().toString(),companyType,edEmailId.getText().toString(),edOwnerName.getText().toString(),edMobileNo.getText().toString(),edMobileNo1.getText().toString(),edTelephone.getText().toString());
-                    prefManager.saveObjectToSharedPreference(getContext(),"mwb-welcome","customer",customerCreation);
+                    customerCreation = new CustomerCreation(ledgerType,edFirmName.getText().toString(),companyType,edOwnerName.getText().toString(),edEmailId.getText().toString(),edMobileNo.getText().toString(),edMobileNo1.getText().toString(),edTelephone.getText().toString());
+                    prefManager.saveObjectToSharedPreference("customer",customerCreation);
                     Toast.makeText(getContext(), "saved", Toast.LENGTH_SHORT).show();
                     callToBillFragment.callingBillingFragment(pos);
                 }

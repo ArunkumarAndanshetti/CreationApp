@@ -19,4 +19,15 @@ public class Customer_Client {
         }
         return retrofit;
     }
+
+    public static Retrofit getClientCreation() {
+
+        if (retrofit==null) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(CustomerCreationInterface.CREATION)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return retrofit;
+    }
 }

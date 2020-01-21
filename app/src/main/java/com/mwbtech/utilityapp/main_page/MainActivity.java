@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Toolbar toolbar;
     public static PrefManager prefManager;
     public static CustomerCreation customerCreation;
+    public static CustomerCreation creation;
     public static int salesmanID = 1599;
     public static int orgID = 1;
     public static int createdByID = 1;

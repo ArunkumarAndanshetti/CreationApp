@@ -49,6 +49,7 @@ import com.basgeekball.awesomevalidation.utility.RegexTemplate;
 import com.mwbtech.utilityapp.R;
 import com.mwbtech.utilityapp.objects.CustomerCreation;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -57,6 +58,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.mwbtech.utilityapp.main_page.MainActivity.creation;
 import static com.mwbtech.utilityapp.main_page.MainActivity.customerCreation;
 import static com.mwbtech.utilityapp.main_page.MainActivity.prefManager;
 
@@ -115,9 +117,11 @@ public class BankDetailsActvity extends Fragment implements View.OnClickListener
         edCity = bankView.findViewById(R.id.edBankCity);
         edAccNo = bankView.findViewById(R.id.edAccountNo);
         edIfsc = bankView.findViewById(R.id.edIFSC);
+
         btnNext.setOnClickListener(this::onClick);
         isReadStoragePermissionGranted();
         isWriteStoragePermissionGranted();
+        sharePrefernceData();
         return bankView;
     }
 
@@ -127,6 +131,25 @@ public class BankDetailsActvity extends Fragment implements View.OnClickListener
         validationMethod();
     }
 
+
+    private void sharePrefernceData() {
+        creation = prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer", CustomerCreation.class);
+        if(creation != null){
+            edBankName.setText(""+creation.getBankName());
+            edBranch.setText(""+creation.getBankBranch());
+            edCity.setText(""+creation.getBankCity());
+            edAccNo.setText(""+creation.getAccountNo());
+            edIfsc.setText(""+creation.getIfscCode());
+        }else {
+            edBankName.setText("");
+            edBranch.setText("");
+            edCity.setText("");
+            edAccNo.setText("");
+            edIfsc.setText("");
+        }
+
+    }
+
     private void validationMethod() {
 
         awesomeValidation.addValidation(getActivity(),R.id.edBankName, RegexTemplate.NOT_EMPTY, R.string.bank_name);
@@ -134,6 +157,7 @@ public class BankDetailsActvity extends Fragment implements View.OnClickListener
         awesomeValidation.addValidation(getActivity(),R.id.edBankCity,RegexTemplate.NOT_EMPTY, R.string.bank_city);
         awesomeValidation.addValidation(getActivity(),R.id.edAccountNo,RegexTemplate.NOT_EMPTY, R.string.acc_no);
         awesomeValidation.addValidation(getActivity(),R.id.edIFSC, RegexTemplate.NOT_EMPTY,R.string.ifsc_code);
+
 
     }
 
@@ -178,14 +202,36 @@ public class BankDetailsActvity extends Fragment implements View.OnClickListener
                     file.mkdirs();
                 }
                 mSignature.save(view, StoredPath);
-                CustomerCreation creation = prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer", CustomerCreation.class);
-                customerCreation = new CustomerCreation(creation.getLedgerType(), creation.getFirmName(), creation.getCompanyType(), creation.getName(), creation.getEmailID(), creation.getMobileNumber(), creation.getMobileNumber2(), creation.getTelephoneNumber(), creation.getBillingAddress(), creation.getArea(), creation.getCity(), creation.getCityCode(), creation.getState(), creation.getPincode(), creation.getLattitude(), creation.getLangitude(), creation.getRegistrationType(), creation.getTinNumber(), creation.getPanNumber(), creation.getGstImage(), creation.getPanImage(),edBankName.getText().toString(),edBranch.getText().toString(),edCity.getText().toString(),edAccNo.getText().toString(),edIfsc.getText().toString(),StoredPath,edComment.getText().toString());
-                prefManager.saveObjectToSharedPreference(getContext(), "mwb-welcome", "customer", customerCreation);
+                String path = getPathMethod(StoredPath);
+                creation = prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer", CustomerCreation.class);
+                customerCreation = new CustomerCreation(creation.getLedgerType(), creation.getFirmName(), creation.getCompanyType(), creation.getName(), creation.getEmailID(), creation.getMobileNumber(), creation.getMobileNumber2(), creation.getTelephoneNumber(), creation.getBillingAddress(), creation.getArea(), creation.getCity(), creation.getCityCode(), creation.getState(), creation.getPincode(), creation.getLattitude(), creation.getLangitude(), creation.getRegistrationType(), creation.getTinNumber(), creation.getPanNumber(), creation.getGstImage(), creation.getPanImage(),edBankName.getText().toString(),edBranch.getText().toString(),edCity.getText().toString(),edAccNo.getText().toString(),edIfsc.getText().toString(),path,edComment.getText().toString());
+                prefManager.saveObjectToSharedPreference("customer", customerCreation);
                 Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
                 customerTrade.callingCustomerTradeFragment(pos);
                 mDialogSign.dismiss();
                 break;
         }
+    }
+
+
+    private String getPathMethod(String toString) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        Bitmap bitmap = BitmapFactory.decodeFile(toString);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 80, baos);
+        //int nh = (int) ( bitmap.getHeight() * (512.0 / bitmap.getWidth()));
+        //Bitmap.createScaledBitmap(bitmap, 512, nh, true);
+        byte[] imageBytes = baos.toByteArray();
+        String imageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        Log.i("Encode",imageString);
+        return imageString;
+    }
+
+
+    public static Bitmap decodeBase64(String input) {
+        byte[] decodedByte = Base64.decode(input, 0);
+        return BitmapFactory
+                .decodeByteArray(decodedByte, 0, decodedByte.length);
     }
 
     public  boolean isReadStoragePermissionGranted() {

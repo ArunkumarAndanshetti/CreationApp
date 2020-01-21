@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.mwbtech.utilityapp.R;
+import com.mwbtech.utilityapp.search_page.ListCustomersActivity;
 
 
 public class SplashScreenActivity extends AppCompatActivity {
@@ -23,7 +24,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
             public void run() {
                 // TODO Auto-generated method stub
-                Intent openActivity = new Intent(getApplicationContext(), WelcomeActivity.class);
+                Intent openActivity = new Intent(getApplicationContext(), ListCustomersActivity.class);
                 openActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 openActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(openActivity);

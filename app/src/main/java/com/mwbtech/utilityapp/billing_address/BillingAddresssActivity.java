@@ -81,6 +81,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -93,6 +94,7 @@ import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.LOCATION_SERVICE;
+import static com.mwbtech.utilityapp.main_page.MainActivity.creation;
 import static com.mwbtech.utilityapp.main_page.MainActivity.customerCreation;
 import static com.mwbtech.utilityapp.main_page.MainActivity.prefManager;
 
@@ -127,7 +129,6 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
     String cityName,stateName;
     Button btnCreateCity,submit,btnSearch;
 
-    CustomerCreation creation;
     String areaName;
     TextView tvLatLong;
     PincodeAdapter pincodeAdapter;
@@ -183,7 +184,7 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mapFragment.getMapAsync(this);
         MarkerPoints = new ArrayList<>();
-        Toast.makeText(getContext(), ""+prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer", CustomerCreation.class), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), ""+prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer", CustomerCreation.class), Toast.LENGTH_SHORT).show();
         checkLocationPermission();
         stateList = new ArrayList<>();
         cityList = new ArrayList<>();
@@ -211,8 +212,28 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
         btnMap.setOnClickListener(this::onClick);
         btnNext.setOnClickListener(this);
         search.setOnClickListener(this::onClick);
+        sharePreferenceData();
+
         return billView;
     }
+
+    private void sharePreferenceData() {
+
+
+        try {
+            creation = prefManager.getSavedObjectFromPreference(getContext(), "mwb-welcome", "customer", CustomerCreation.class);
+            edBillingAddress.setText("" + creation.getBillingAddress());
+            edArea.setText("" + creation.getArea());
+            spCity.setText(creation.getCity());
+            edCityCode.setText("" + creation.getCityCode());
+            edPincode.setText("" + creation.getPincode());
+            spState.setText(creation.getState());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
 
 
     @Override
@@ -284,9 +305,9 @@ public class BillingAddresssActivity extends Fragment implements OnMapReadyCallb
                         if (latitude == 0.0 && longitude == 0.0){
                             Toast.makeText(getActivity(), "Please press the google map button and check it", Toast.LENGTH_SHORT).show();
                         }
-                        CustomerCreation creation = prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer", CustomerCreation.class);
+                        creation = prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer", CustomerCreation.class);
                         customerCreation = new CustomerCreation(creation.getLedgerType(), creation.getFirmName(), creation.getCompanyType(),creation.getName(),creation.getEmailID(),creation.getMobileNumber(),creation.getMobileNumber2(),creation.getTelephoneNumber(),edBillingAddress.getText().toString(),edArea.getText().toString(),cityName,edCityCode.getText().toString(),stateName,Integer.parseInt(edPincode.getText().toString()),latitude,longitude);
-                        prefManager.saveObjectToSharedPreference(getContext(), "mwb-welcome", "customer", customerCreation);
+                        prefManager.saveObjectToSharedPreference("customer", customerCreation);
                         prefManager.getSavedObjectFromPreference(getContext(),"mwb-welcome","customer",CustomerCreation.class);
                         callToFragment.communicateFragment(pos);
                     }catch (Exception e){
